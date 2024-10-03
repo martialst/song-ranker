@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Ranker</title>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Import Section (Left) -->        
+        <div class="import-section">
+            <textarea id="inputWords" placeholder="Paste your song names here..."></textarea>
+            <button onclick="importWords()">Import Song Names</button>
+        </div>
+
+        <!-- Draggable Row List (Center) -->
+        <div id="wordList" class="word-list"></div>
+		
+		<!-- Export Section (Right) -->
+        <div class="export-section">
+            <textarea id="outputWords" placeholder="Sorted songlist will appear here..." readonly></textarea>
+            <button onclick="exportWords()">Get Ranked Songs</button>
+        </div>
+    </div>	
+    <script src="scripts.js"></script>
+</body>
+</html>
