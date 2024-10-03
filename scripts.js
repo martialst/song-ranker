@@ -1,5 +1,6 @@
 let draggedItem = null;
 let draggingOverItem = null;
+let isListModified = false; // Track if the list has been modified
 let scrollInterval = null; // To handle scrolling
 
 // Load saved items from cache when the page loads
@@ -16,6 +17,11 @@ function importWords() {
     const textArea = document.getElementById('inputWords').value;
     const rowsArray = textArea.split('\n').filter(row => row.trim().length > 0);
     
+    // Check if the list has been modified before proceeding
+    if (isListModified && !confirm("You have unsaved changes. Do you really want to reset the list?")) {
+        return; // Cancel the import if the user doesn't confirm
+    }
+
     const wordList = document.getElementById('wordList');
     wordList.innerHTML = '';  // Clear current list
 
@@ -54,13 +60,11 @@ function importWords() {
             const bounding = draggingOverItem.getBoundingClientRect();
             const offset = bounding.y + bounding.height / 2;
             
-            // Dynamically move the item up or down based on mouse position
-            if (e.clientY - offset > 0) {
-                draggingOverItem.style['border-bottom'] = "2px solid #4299e1";
-                draggingOverItem.style['border-top'] = "";
+            // Determine where to apply the gradient effect
+            if (e.clientY < offset) {
+                draggingOverItem.style['background-image'] = 'linear-gradient(to bottom, rgba(66, 153, 225, 0.2), transparent)';
             } else {
-                draggingOverItem.style['border-top'] = "2px solid #4299e1";
-                draggingOverItem.style['border-bottom'] = "";
+                draggingOverItem.style['background-image'] = 'linear-gradient(to top, rgba(66, 153, 225, 0.2), transparent)';
             }
 
             // Auto-scroll if dragging near top or bottom of the list
@@ -81,12 +85,14 @@ function importWords() {
         });
 
         rowElement.addEventListener('dragleave', function() {
+            draggingOverItem.style['background-image'] = ''; // Reset background image
             draggingOverItem.style['border-bottom'] = "";
             draggingOverItem.style['border-top'] = "";
         });
 
         rowElement.addEventListener('drop', function(e) {
             e.preventDefault();
+            draggingOverItem.style['background-image'] = ''; // Reset background image
             draggingOverItem.style['border-bottom'] = "";
             draggingOverItem.style['border-top'] = "";
 
@@ -95,10 +101,10 @@ function importWords() {
                 const offset = bounding.y + bounding.height / 2;
 
                 // Insert the dragged item before or after the target, depending on mouse position
-                if (e.clientY - offset > 0) {
-                    draggingOverItem.insertAdjacentElement('afterend', draggedItem);
-                } else {
+                if (e.clientY < offset) {
                     draggingOverItem.insertAdjacentElement('beforebegin', draggedItem);
+                } else {
+                    draggingOverItem.insertAdjacentElement('afterend', draggedItem);
                 }
 
                 // Remove the recently-placed class from all items
@@ -113,6 +119,8 @@ function importWords() {
                 setTimeout(() => {
                     draggedItem.classList.remove('recently-placed');
                 }, 2000);
+                
+                isListModified = true; // Set the modified flag when dragging occurs
             }
         });
 
@@ -157,3 +165,6 @@ function saveItemsToCache() {
     const items = Array.from(wordElements).map(item => item.querySelector('span:last-child').textContent);
     localStorage.setItem('rowSorterItems', items.join('\n'));
 }
+
+// Attach event to the import button
+document.getElementById('importWords').addEventListener('click', importWords);
