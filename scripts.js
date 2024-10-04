@@ -16,7 +16,7 @@ window.addEventListener('load', function() {
 function importWords() {
     const textArea = document.getElementById('inputWords').value;
     const rowsArray = textArea.split('\n').filter(row => row.trim().length > 0);
-    
+
     // Check if the list has been modified before proceeding
     if (isListModified && !confirm("You have unsaved changes. Do you really want to reset the list?")) {
         return; // Cancel the import if the user doesn't confirm
@@ -25,20 +25,41 @@ function importWords() {
     const wordList = document.getElementById('wordList');
     wordList.innerHTML = '';  // Clear current list
 
-    rowsArray.forEach((row, index) => {
-        const rowElement = document.createElement('div');
-        rowElement.classList.add('word-item');
-        rowElement.setAttribute('draggable', true);
+	rowsArray.forEach((row, index) => {
+		const rowElement = document.createElement('div');
+		rowElement.classList.add('word-item');
+		rowElement.setAttribute('draggable', true);
 
-        const numberElement = document.createElement('span');
-        numberElement.classList.add('word-item-number');
-        numberElement.textContent = `${index + 1}.`;
+		// Create a wrapper for the text elements
+		const textWrapper = document.createElement('div');
+		textWrapper.classList.add('text-wrapper');
 
-        const textElement = document.createElement('span');
-        textElement.textContent = row;
+		const numberElement = document.createElement('span');
+		numberElement.classList.add('word-item-number');
+		numberElement.textContent = `${index + 1}.`;
 
-        rowElement.appendChild(numberElement);
-        rowElement.appendChild(textElement);
+		const textElement = document.createElement('span');
+		textElement.textContent = row;
+
+		// Create buttons for moving items
+		const moveToTopButton = document.createElement('button');
+		moveToTopButton.textContent = '▲'; // Arrow up
+		moveToTopButton.classList.add('move-button');
+		moveToTopButton.addEventListener('click', () => moveToTop(rowElement));
+
+		const moveToBottomButton = document.createElement('button');
+		moveToBottomButton.textContent = '▼'; // Arrow down
+		moveToBottomButton.classList.add('move-button');
+		moveToBottomButton.addEventListener('click', () => moveToBottom(rowElement));
+
+		// Append elements to the textWrapper
+		textWrapper.appendChild(numberElement);
+		textWrapper.appendChild(textElement);
+		
+		// Append textWrapper and buttons to rowElement
+		rowElement.appendChild(textWrapper);
+		rowElement.appendChild(moveToTopButton);
+		rowElement.appendChild(moveToBottomButton);
 
         // Event listeners for dynamic drag-and-drop
         rowElement.addEventListener('dragstart', function() {
@@ -155,7 +176,7 @@ function updateItemNumbers() {
 // Export the reordered list of rows to the output text area
 function exportWords() {
     const wordElements = document.querySelectorAll('.word-item');
-    const orderedRows = Array.from(wordElements).map(item => item.querySelector('span:last-child').textContent);
+    const orderedRows = Array.from(wordElements).map(item => item.querySelector('span:nth-child(2)').textContent); // Use nth-child(2) to get the second span
     document.getElementById('outputWords').value = orderedRows.join('\n');
 }
 
@@ -165,6 +186,178 @@ function saveItemsToCache() {
     const items = Array.from(wordElements).map(item => item.querySelector('span:last-child').textContent);
     localStorage.setItem('rowSorterItems', items.join('\n'));
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const showResultsButton = document.getElementById('showResultsButton');
+    const resultsGrid = document.getElementById('resultsGrid');
+    
+    if (showResultsButton && resultsGrid) {
+        // Add event listener to the button
+        showResultsButton.addEventListener('click', showResults);
+    } else {
+        console.error('Required elements not found: showResultsButton or resultsGrid');
+    }
+});
+
+// Helper function to generate colors in a gradient
+function generateGradientColor(startColor, endColor, percent) {
+    const start = parseInt(startColor.slice(1), 16); // Remove "#" and convert to integer
+    const end = parseInt(endColor.slice(1), 16);
+
+    const r = Math.floor((start >> 16) * (1 - percent) + (end >> 16) * percent);
+    const g = Math.floor(((start >> 8) & 0xff) * (1 - percent) + ((end >> 8) & 0xff) * percent);
+    const b = Math.floor((start & 0xff) * (1 - percent) + (end & 0xff) * percent);
+
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
+function showResults() {
+    const resultsSection = document.getElementById('resultsSection');
+    const resultsGrid = document.getElementById('resultsGrid');
+    
+    if (!resultsGrid) {
+        console.error('Results grid element not found.');
+        return;
+    }
+
+    // Get the selected colors from the color pickers
+    const startColor = document.getElementById('startColorPicker').value;
+    const endColor = document.getElementById('endColorPicker').value;
+
+    // Clear previous results
+    resultsGrid.innerHTML = '';
+
+    // Get the ordered list of songs from the draggable list
+    const wordElements = document.querySelectorAll('.word-item');
+    const totalItems = wordElements.length;
+
+	const orderedRows = Array.from(wordElements).map((item, index) => {
+		// Calculate the percentage position of the item in the list
+		const percent = index / (totalItems - 1);
+		
+		// Generate the gradient color for the current item
+		const backgroundColor = generateGradientColor(startColor, endColor, percent);
+
+		return `<div class="result-item" style="background-color: ${backgroundColor}">
+					<span class="result-number">${index + 1}.</span>
+					<span>${item.querySelector('span:nth-child(2)').textContent}</span> <!-- Use nth-child(2) here -->
+				</div>`;
+	});
+
+    // Append the result items to the results grid
+    resultsGrid.innerHTML = orderedRows.join('');
+
+    // Make sure the results section is visible and scroll to it
+    resultsSection.classList.remove('hidden');
+    
+    // Scroll to the results section smoothly
+    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+
+function moveToTop(item) {
+    const wordList = document.getElementById('wordList');
+    wordList.prepend(item); // Move the item to the top
+    updateItemNumbers(); // Update the numbers after moving
+    isListModified = true; // Mark the list as modified
+}
+
+function moveToBottom(item) {
+    const wordList = document.getElementById('wordList');
+    wordList.appendChild(item); // Move the item to the bottom
+    updateItemNumbers(); // Update the numbers after moving
+    isListModified = true; // Mark the list as modified
+}
+
+
+
+
+
+//SHORTENER
+// Declare urlMapping at the top of the script
+let urlMapping = {}; 
+
+// Load URL mapping from local storage on page load
+function loadUrlMapping() {
+    const savedMapping = localStorage.getItem('urlMapping');
+    if (savedMapping) {
+        urlMapping = JSON.parse(savedMapping);
+    }
+}
+
+// Save the updated URL mapping to local storage
+function saveUrlMapping() {
+    localStorage.setItem('urlMapping', JSON.stringify(urlMapping));
+}
+
+// Function to generate a unique short identifier
+function generateShortId() {
+    return 'id_' + Math.random().toString(36).substr(2, 8); // Generates a random 8-character ID
+}
+
+// Share Ranking Functionality with URL shortening
+function shareRanking() {
+    const wordElements = document.querySelectorAll('.word-item');
+    const orderedRows = Array.from(wordElements).map(item => item.querySelector('span:last-child').textContent);
+    
+    // Encode the ordered list as a hash fragment
+    const encodedRanking = encodeURIComponent(JSON.stringify(orderedRows));
+    
+    // Check if this ranking already has a short ID
+    let shortId = null;
+    for (const id in urlMapping) {
+        if (urlMapping[id] === encodedRanking) {
+            shortId = id;
+            break;
+        }
+    }
+
+    // If no existing short ID found, generate a new one
+    if (!shortId) {
+        shortId = generateShortId();
+        urlMapping[shortId] = encodedRanking; // Map the short ID to the ranking
+        saveUrlMapping(); // Save the updated mapping
+    }
+    
+    const currentURL = window.location.href.split('#')[0]; // Get the current URL without any hash
+    const shareableURL = `${currentURL}#${shortId}`; // Use the short ID in the URL
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(shareableURL).then(() => {
+        alert('Short Ranking URL copied to clipboard: ' + shareableURL);
+    }).catch(err => {
+        console.error('Could not copy text: ', err);
+    });
+}
+
+window.addEventListener('load', function() {
+    loadUrlMapping(); // Load the mapping when the page loads
+
+    // Check for hash fragment
+    const hash = window.location.hash;
+    if (hash.startsWith('#id_')) { // Check if it starts with the short ID prefix
+        const shortId = hash.substring(1); // Remove the '#' from the ID
+        const encodedRanking = urlMapping[shortId]; // Get the ranking from the mapping
+
+        if (encodedRanking) {
+            const orderedRows = JSON.parse(decodeURIComponent(encodedRanking));
+            // Populate the input area and import the words
+            document.getElementById('inputWords').value = orderedRows.join('\n');
+            importWords(); // Call the import function to display the songs
+        } else {
+            console.error('No ranking found for this ID');
+        }
+    } else {
+        const savedItems = localStorage.getItem('rowSorterItems');
+        if (savedItems) {
+            document.getElementById('inputWords').value = savedItems;
+            importWords();
+        }
+    }
+});
+
+// Attach event listener to the share button
+document.getElementById('shareButton').addEventListener('click', shareRanking);
 
 // Attach event to the import button
 document.getElementById('importWords').addEventListener('click', importWords);

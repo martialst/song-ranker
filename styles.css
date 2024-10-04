@@ -2,32 +2,39 @@
 body {
     font-family: 'Inter', sans-serif;    
     margin: 0;
+	margin-top: 30px; 
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: flex-start;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     color: #2d3748;
     background-image: url('image/aespa-Armageddon-1st-Full-Album-Concept-Photos-documents-15(13).jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-color: rgba(255, 255, 255, 0.3);
+	background-attachment: fixed;
+    overflow-x: hidden; /* Prevent any weird horizontal overflows */
 }
 
+/* Main container remains stable */
 .container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between; /* Ensure equal spacing between elements */
+    justify-content: space-between; 
     align-items: flex-start;
-    width: 80%;    
-    height: 90vh;
+    width: 80%;
+    height: 90vh; /* Height reduced to avoid overflow */
     background-color: rgba(255, 255, 255, 0.8);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     padding: 20px;
     border-radius: 15px;
     gap: 20px;
-    overflow: hidden; /* Ensure nothing sticks out of the container */
+    box-sizing: border-box;
+    position: relative; /* Ensure it stays in place */
 }
+
 
 /* Import and Export Sections */
 .import-section, .export-section {
@@ -95,18 +102,18 @@ button:hover {
 /* Draggable List (Center) */
 .word-item {
     display: flex;
-    align-items: center;
-    padding: 3px 20px;
+    align-items: center; /* Center items vertically */
+    padding: 3px 20px; /* Adjust padding */
     background-color: #4a5568;
     color: white;
     border-radius: 15px;
     cursor: move;
     user-select: none;
-    text-align: left;
+    text-align: left; /* Keep text aligned to the left */
     font-size: 16px;
-    /*margin-bottom: 3px;*/
     transition: all 0.3s ease;
     font-family: 'Inter', sans-serif;
+    position: relative; /* Allow absolute positioning for buttons */
 }
 
 .word-item-number {
@@ -170,4 +177,101 @@ button:hover {
 
 ::-ms-input-placeholder {
     color: #a0aec0;
+}
+
+h2 {
+	color: #ffffff;
+}
+
+/* Results Section */
+.results-section {
+    margin-top: 40px; /* Space below the main container */
+    width: 90%; /* Full width below the container */
+    padding: 20px;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Dynamic columns */
+    grid-auto-flow: row; /* Flow items top-down first */
+    gap: 15px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    box-sizing: border-box;
+	margin-bottom: 50px;
+}
+
+/* Style each result item */
+.result-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: #4a5568;
+    color: white;
+    border-radius: 10px;
+    font-size: 16px;
+    user-select: none;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+	font-weight: bold;
+}
+
+.result-number {
+    margin-right: 10px;
+    font-weight: bold;
+    color: #000000;
+	font-weight: bold;
+	/*outline: 2px solid #000;
+	background-color: #888888;
+	border-radius: 5px;
+	padding: 2px;*/
+}
+.result-number.p{
+	outline: 2px solid #fff;
+}
+
+/* Smooth scrolling ensures page doesn't jump */
+html {
+    scroll-behavior: smooth;
+}
+
+/*color picker*/
+.color-picker-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px; /* Adjust this for spacing */
+}
+
+input[type="color"] {
+    width: 40px;
+    height: 30px;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+}
+
+
+.text-wrapper {
+    flex-grow: 1; /* Allow this div to take available space */
+    display: flex; /* Use flex to align the number and text */
+    align-items: center; /* Center items vertically */
+}
+
+.move-button {
+    margin-left: 10px; /* Space between text and buttons */
+    padding: 5px 8px; /* Button padding */
+    /*background-color: #4299e1; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+.move-button:hover {
+    background-color: #3182ce; /* Darker shade on hover */
 }

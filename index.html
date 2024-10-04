@@ -15,7 +15,7 @@
         <!-- Import Section (Left) -->        
         <div class="import-section">
             <textarea id="inputWords" placeholder="Paste your song names here..."></textarea>
-            <button onclick="importWords()">Import Song Names</button>
+            <button onclick="importWords()">Import Songs</button>
         </div>
 
         <!-- Draggable Row List (Center) -->
@@ -24,9 +24,23 @@
 		<!-- Export Section (Right) -->
         <div class="export-section">
             <textarea id="outputWords" placeholder="Sorted songlist will appear here..." readonly></textarea>
-            <button onclick="exportWords()">Get Ranked Songs</button>
+            <button onclick="exportWords()">Get Ranked List</button>
+			<button id="shareButton">Share</button>
+			<button onclick="showResults()">Show Results</button>
         </div>
+
+
     </div>	
+	<!-- Hidden Results Section -->
+	<div id="resultsSection" class="results-section hidden">
+		<h2>Your Ranked Songs</h2>
+		<div class="color-picker-container">
+			<input type="color" id="startColorPicker" value="#68D391">					
+			<input type="color" id="endColorPicker" value="#2F855A">
+		</div>
+		<div id="resultsGrid" class="results-grid"></div> <!-- Will dynamically fill with ranked songs -->
+	</div>
     <script src="scripts.js"></script>
+
 </body>
 </html>
