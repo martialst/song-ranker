@@ -143,10 +143,10 @@ button:hover {
 
 @keyframes highlightFade {
     0% {
-        background-color: #0DA046;
+        background-color: #68d391;
     }
     100% {
-        background-color: #731212;
+        background-color: #4a5568;
     }
 }
 
