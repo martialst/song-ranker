@@ -9,7 +9,7 @@ body {
     align-items: center;
     min-height: 100vh;
     color: #2d3748;
-    background-image: url('image/aespa-Armageddon-1st-Full-Album-Concept-Photos-documents-15(13).jpeg');
+    background-image: url('image/red-velvet-__________-rbb-really-bad-boy-mv-3-7-screenshot.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -143,10 +143,10 @@ button:hover {
 
 @keyframes highlightFade {
     0% {
-        background-color: #68d391;
+        background-color: #0DA046;
     }
     100% {
-        background-color: #4a5568;
+        background-color: #731212;
     }
 }
 
