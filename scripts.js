@@ -211,7 +211,40 @@ function generateGradientColor(startColor, endColor, percent) {
     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 }
 
-function showResults() {
+// Color picker functions for Text and Panel Background
+function updateTextColor() {
+    const color = document.getElementById('textColorPicker').value;
+    document.querySelectorAll('.result-item').forEach(item => {
+        item.style.color = color;
+    });
+}
+
+function updatePanelBgColor() {
+    const hexColor = document.getElementById('panelBgColorPicker').value;
+
+    // Convert hex to RGB
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+
+    // Set the background color with 0.8 transparency
+    document.getElementById('resultsGrid').style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.8)`;
+}
+
+// Gradient Mode Toggle
+function toggleGradientMode() {
+    const isGradual = document.getElementById('gradientModeToggle').checked;
+    showResults(isGradual); // Pass the gradient mode to the showResults function
+}
+
+// Update the event listeners on color pickers and toggle
+document.getElementById('startColorPicker').addEventListener('input', toggleGradientMode);
+document.getElementById('endColorPicker').addEventListener('input', toggleGradientMode);
+document.getElementById('textColorPicker').addEventListener('input', updateTextColor);
+document.getElementById('panelBgColorPicker').addEventListener('input', updatePanelBgColor);
+document.getElementById('gradientModeToggle').addEventListener('change', toggleGradientMode);
+
+function showResults(isGradual = false) {
     const resultsSection = document.getElementById('resultsSection');
     const resultsGrid = document.getElementById('resultsGrid');
     
@@ -220,39 +253,36 @@ function showResults() {
         return;
     }
 
-    // Get the selected colors from the color pickers
     const startColor = document.getElementById('startColorPicker').value;
     const endColor = document.getElementById('endColorPicker').value;
+    resultsGrid.innerHTML = ''; // Clear previous results
 
-    // Clear previous results
-    resultsGrid.innerHTML = '';
-
-    // Get the ordered list of songs from the draggable list
     const wordElements = document.querySelectorAll('.word-item');
     const totalItems = wordElements.length;
 
-	const orderedRows = Array.from(wordElements).map((item, index) => {
-		// Calculate the percentage position of the item in the list
-		const percent = index / (totalItems - 1);
-		
-		// Generate the gradient color for the current item
-		const backgroundColor = generateGradientColor(startColor, endColor, percent);
+    const orderedRows = Array.from(wordElements).map((item, index) => {
+        let percent;
+        if (isGradual) {
+            // Apply the same color for each 10-item block
+            percent = Math.floor(index / 10) / (totalItems / 10);
+        } else {
+            // Smooth gradient for each item
+            percent = index / (totalItems - 1);
+        }
 
-		return `<div class="result-item" style="background-color: ${backgroundColor}">
-					<span class="result-number">${index + 1}.</span>
-					<span>${item.querySelector('span:nth-child(2)').textContent}</span> <!-- Use nth-child(2) here -->
-				</div>`;
-	});
+        const backgroundColor = generateGradientColor(startColor, endColor, percent);
 
-    // Append the result items to the results grid
+        return `<div class="result-item" style="background-color: ${backgroundColor}">
+                    <span class="result-number">${index + 1}.</span>
+                    <span>${item.querySelector('span:nth-child(2)').textContent}</span>
+                </div>`;
+    });
+
     resultsGrid.innerHTML = orderedRows.join('');
-
-    // Make sure the results section is visible and scroll to it
     resultsSection.classList.remove('hidden');
-    
-    // Scroll to the results section smoothly
     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
 
 
 function moveToTop(item) {

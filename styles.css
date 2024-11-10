@@ -9,7 +9,7 @@ body {
     align-items: center;
     min-height: 100vh;
     color: #2d3748;
-    background-image: url('image/red-velvet-__________-rbb-really-bad-boy-mv-3-7-screenshot.png');
+    background-image: url('image/winterbg2.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -91,6 +91,10 @@ button {
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.blue-button {
+	margin-bottom: 10px;
 }
 
 button:hover {
@@ -180,6 +184,9 @@ button:hover {
 }
 
 h2 {
+	color: #ffffff;
+}
+p {
 	color: #ffffff;
 }
 
@@ -274,4 +281,17 @@ input[type="color"] {
 
 .move-button:hover {
     background-color: #3182ce; /* Darker shade on hover */
+}
+
+.toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
 }
