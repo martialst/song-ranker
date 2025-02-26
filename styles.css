@@ -9,7 +9,7 @@ body {
     align-items: center;
     min-height: 100vh;
     color: #2d3748;
-    background-image: url('image/winterbg2.png');
+    background-image: url('image/mountain.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -294,4 +294,34 @@ input[type="color"] {
 input[type="checkbox"] {
     width: 20px;
     height: 20px;
+}
+
+/* Hide buttons by default */
+.move-button {
+    margin-left: 5px;
+    padding: 3px 6px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0; /* Start with invisible buttons */
+    transition: opacity 0.2s ease, background-color 0.3s ease;
+    visibility: hidden; /* Completely hide them, not just make transparent */
+}
+
+/* Show buttons on hover */
+.word-item:hover .move-button {
+    opacity: 1; /* Make buttons visible */
+    visibility: visible; /* Make them appear */
+}
+
+/* Style for different button types */
+.move-button:hover {
+    background-color: #3182ce;
+}
+
+/* Optional: make buttons smaller and more compact */
+.button-group {
+    display: flex;
+    margin-left: auto; /* Push buttons to the right */
 }

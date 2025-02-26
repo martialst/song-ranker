@@ -2,6 +2,7 @@ let draggedItem = null;
 let draggingOverItem = null;
 let isListModified = false; // Track if the list has been modified
 let scrollInterval = null; // To handle scrolling
+let markedItems = new Set();
 
 // Load saved items from cache when the page loads
 window.addEventListener('load', function() {
@@ -24,42 +25,70 @@ function importWords() {
 
     const wordList = document.getElementById('wordList');
     wordList.innerHTML = '';  // Clear current list
+    markedItems = new Set(); // Reset the marked items set
 
-	rowsArray.forEach((row, index) => {
-		const rowElement = document.createElement('div');
-		rowElement.classList.add('word-item');
-		rowElement.setAttribute('draggable', true);
+    rowsArray.forEach((row, index) => {
+        const rowElement = document.createElement('div');
+        rowElement.classList.add('word-item');
+        rowElement.setAttribute('draggable', true);
 
-		// Create a wrapper for the text elements
-		const textWrapper = document.createElement('div');
-		textWrapper.classList.add('text-wrapper');
+        // Create a wrapper for the text elements
+        const textWrapper = document.createElement('div');
+        textWrapper.classList.add('text-wrapper');
 
-		const numberElement = document.createElement('span');
-		numberElement.classList.add('word-item-number');
-		numberElement.textContent = `${index + 1}.`;
+        const numberElement = document.createElement('span');
+        numberElement.classList.add('word-item-number');
+        numberElement.textContent = `${index + 1}.`;
 
-		const textElement = document.createElement('span');
-		textElement.textContent = row;
-
-		// Create buttons for moving items
-		const moveToTopButton = document.createElement('button');
-		moveToTopButton.textContent = '▲'; // Arrow up
-		moveToTopButton.classList.add('move-button');
-		moveToTopButton.addEventListener('click', () => moveToTop(rowElement));
-
-		const moveToBottomButton = document.createElement('button');
-		moveToBottomButton.textContent = '▼'; // Arrow down
-		moveToBottomButton.classList.add('move-button');
-		moveToBottomButton.addEventListener('click', () => moveToBottom(rowElement));
-
-		// Append elements to the textWrapper
-		textWrapper.appendChild(numberElement);
-		textWrapper.appendChild(textElement);
+        const textElement = document.createElement('span');
+        textElement.textContent = row;
 		
-		// Append textWrapper and buttons to rowElement
-		rowElement.appendChild(textWrapper);
-		rowElement.appendChild(moveToTopButton);
-		rowElement.appendChild(moveToBottomButton);
+		// Create a button group container
+        const buttonGroup = document.createElement('div');
+        buttonGroup.classList.add('button-group');
+
+        // Create buttons for moving items
+		const moveUpButton = document.createElement('button');
+        moveUpButton.textContent = '▲'; // Arrow up
+        moveUpButton.classList.add('move-button');
+		moveUpButton.title = 'Move Up';
+        moveUpButton.addEventListener('click', () => moveUp(rowElement));
+
+        const moveDownButton = document.createElement('button');
+        moveDownButton.textContent = '▼'; // Arrow down
+        moveDownButton.classList.add('move-button');
+		moveDownButton.title = 'Move Down';
+        moveDownButton.addEventListener('click', () => moveDown(rowElement));
+		
+        const moveToTopButton = document.createElement('button');
+        moveToTopButton.textContent = ' ⊼ '; // Arrow up
+        moveToTopButton.classList.add('move-button');
+		moveToTopButton.title = 'Move to Top';
+        moveToTopButton.addEventListener('click', () => moveToTop(rowElement));
+
+        const moveToBottomButton = document.createElement('button');
+        moveToBottomButton.textContent = ' ⊻ '; // Arrow down
+        moveToBottomButton.classList.add('move-button');
+		moveToBottomButton.title = 'Move to Bottom';
+        moveToBottomButton.addEventListener('click', () => moveToBottom(rowElement));
+
+        // Append elements to the textWrapper
+        textWrapper.appendChild(numberElement);
+        textWrapper.appendChild(textElement);
+        
+		// Append buttons to the button group        
+        buttonGroup.appendChild(moveUpButton);
+        buttonGroup.appendChild(moveDownButton);
+		buttonGroup.appendChild(moveToTopButton);
+        buttonGroup.appendChild(moveToBottomButton);
+		
+		// Append textWrapper and button group to rowElement
+        rowElement.appendChild(textWrapper);
+        rowElement.appendChild(buttonGroup);
+
+
+        // Add right-click event listener
+        rowElement.addEventListener('contextmenu', handleRightClick);
 
         // Event listeners for dynamic drag-and-drop
         rowElement.addEventListener('dragstart', function() {
@@ -150,6 +179,7 @@ function importWords() {
 
     saveItemsToCache(); // Save items after importing
 }
+
 
 // Start scrolling function
 function startScroll() {
@@ -290,6 +320,14 @@ function moveToTop(item) {
     wordList.prepend(item); // Move the item to the top
     updateItemNumbers(); // Update the numbers after moving
     isListModified = true; // Mark the list as modified
+	
+	// Add a short highlight effect
+	item.classList.add('recently-placed');
+	setTimeout(() => {
+		item.classList.remove('recently-placed');
+	}, 1000);  
+	
+	scrollIntoView(item);
 }
 
 function moveToBottom(item) {
@@ -297,7 +335,112 @@ function moveToBottom(item) {
     wordList.appendChild(item); // Move the item to the bottom
     updateItemNumbers(); // Update the numbers after moving
     isListModified = true; // Mark the list as modified
+	
+	// Add a short highlight effect
+	item.classList.add('recently-placed');
+	setTimeout(() => {
+		item.classList.remove('recently-placed');
+	}, 1000);  
+		
+	scrollIntoView(item);
 }
+
+
+function moveUp(item) {
+    const previousItem = item.previousElementSibling;
+    
+    // Check if there's an item above this one
+    if (previousItem) {
+        // Insert this item before the previous one
+        previousItem.insertAdjacentElement('beforebegin', item);
+        
+        // Update the numbers after moving
+        updateItemNumbers();
+        
+        // Mark the list as modified
+        isListModified = true;
+        
+        // Save items after reordering
+        saveItemsToCache();
+        
+        // Add a short highlight effect
+        item.classList.add('recently-placed');
+        setTimeout(() => {
+            item.classList.remove('recently-placed');
+        }, 1000);  
+
+		scrollIntoView(item);
+    }
+}
+
+
+function moveDown(item) {
+    const nextItem = item.nextElementSibling;
+    
+    // Check if there's an item below this one
+    if (nextItem) {
+        // Insert this item after the next one
+        nextItem.insertAdjacentElement('afterend', item);
+        
+        // Update the numbers after moving
+        updateItemNumbers();
+        
+        // Mark the list as modified
+        isListModified = true;
+        
+        // Save items after reordering
+        saveItemsToCache();
+        
+        // Add a short highlight effect
+        item.classList.add('recently-placed');
+        setTimeout(() => {
+            item.classList.remove('recently-placed');
+        }, 1000);
+		
+		scrollIntoView(item);
+    }
+}
+
+// Scroll the moved item into view
+function scrollIntoView(item) {	
+	item.scrollIntoView({
+		behavior: 'smooth',   // Smooth scrolling
+		block: 'nearest'      // Scroll just enough to bring the item into view
+	});
+}
+
+
+
+// handle right-click on draggable items to change color
+function handleRightClick(event) {
+    event.preventDefault(); // Prevent the default context menu
+    
+    const wordItem = event.currentTarget;
+    
+    // Toggle the marked state
+    if (markedItems.has(wordItem)) {
+        // Item is already marked, so unmark it
+        wordItem.style.backgroundColor = ''; // Reset to default color
+        markedItems.delete(wordItem);
+    } else {
+        // Item is not marked, so mark it
+        wordItem.style.backgroundColor = '#216e39'; // Dark green
+        markedItems.add(wordItem);
+    }
+    
+    // Mark as modified
+    isListModified = true;
+    
+    // Save the marked state
+    saveItemsToCache();
+}
+
+
+
+
+
+
+
 
 
 
