@@ -16,39 +16,44 @@
         <div class="import-section">
             <textarea id="inputWords" placeholder="Paste your song names here..."></textarea>
             <button onclick="importWords()" class="blue-button">Import Songs</button>
+            <div class="randomize-wrapper">
+				<button onclick="randomizeList()" class="randomize-button subtle">🎲 Randomize</button>
+			</div>
         </div>
 
         <!-- Draggable Row List (Center) -->
         <div id="wordList" class="word-list"></div>
-		
-		<!-- Export Section (Right) -->
+        
+        <!-- Export Section (Right) -->
         <div class="export-section">
             <textarea id="outputWords" placeholder="Sorted songlist will appear here..." readonly></textarea>
-            <button onclick="exportWords()" class="blue-button">Get Ranked List</button>
-			<!-- <button id="shareButton">Share</button> -->
-			<button onclick="showResults()" class="blue-button">Show Results</button>
+            <label class="toggle">
+                <input type="checkbox" id="showNumbersToggle">                
+				<span>Show with ranking numbers</span>                
+            </label>            
+			<button onclick="exportWords()" class="blue-button">Get Ranked List</button>
+            <button onclick="showResults()" class="blue-button">Show Results</button>
         </div>
+    </div>    
 
-
-    </div>	
-	<!-- Hidden Results Section -->
-	<div id="resultsSection" class="results-section hidden">
-		<h2>Your Ranked Songs</h2>
-		<div class="color-picker-container">
-			<p>Item:</p>
-			<input type="color" id="startColorPicker" value="#009439">					
-			<input type="color" id="endColorPicker" value="#731212">
-			<p>Text:</p>
-			<input type="color" id="textColorPicker" value="#FFFFFF">
-			<p>Background:</p>
-			<input type="color" id="panelBgColorPicker" value="#FFFFFF">
-			<label class="toggle">
-				<span>Gradual Gradient Mode:</span>
-				<input type="checkbox" id="gradientModeToggle">				
-			</label>			
-		</div>
-		<div id="resultsGrid" class="results-grid"></div> <!-- Will dynamically fill with ranked songs -->
-	</div>
+    <!-- Hidden Results Section -->
+    <div id="resultsSection" class="results-section hidden">
+        <h2>Your Ranked Songs</h2>
+        <div class="color-picker-container">
+            <p>Item:</p>
+            <input type="color" id="startColorPicker" value="#009439">                    
+            <input type="color" id="endColorPicker" value="#731212">
+            <p>Text:</p>
+            <input type="color" id="textColorPicker" value="#FFFFFF">
+            <p>Background:</p>
+            <input type="color" id="panelBgColorPicker" value="#FFFFFF">
+            <label class="toggle">
+                <span>Gradual Gradient Mode:</span>
+                <input type="checkbox" id="gradientModeToggle">                
+            </label>
+        </div>
+        <div id="resultsGrid" class="results-grid"></div>
+    </div>
     <script src="scripts.js"></script>
 </body>
 </html>

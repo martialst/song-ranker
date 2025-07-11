@@ -205,8 +205,14 @@ function updateItemNumbers() {
 
 // Export the reordered list of rows to the output text area
 function exportWords() {
+    const showNumbers = document.getElementById('showNumbersToggle').checked;
     const wordElements = document.querySelectorAll('.word-item');
-    const orderedRows = Array.from(wordElements).map(item => item.querySelector('span:nth-child(2)').textContent); // Use nth-child(2) to get the second span
+
+    const orderedRows = Array.from(wordElements).map((item, index) => {
+        const text = item.querySelector('span:nth-child(2)').textContent;
+        return showNumbers ? `${index + 1}. ${text}` : text;
+    });
+
     document.getElementById('outputWords').value = orderedRows.join('\n');
 }
 
@@ -435,6 +441,28 @@ function handleRightClick(event) {
     saveItemsToCache();
 }
 
+
+function randomizeList() {
+    if (!confirm("Are you sure you want to randomize the list? This will overwrite the current order.")) {
+        return;
+    }
+
+    const wordList = document.getElementById('wordList');
+    const items = Array.from(wordList.children);
+
+    // Fisher–Yates shuffle
+    for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+    }
+
+    // Re-append shuffled items
+    items.forEach(item => wordList.appendChild(item));
+
+    updateItemNumbers();
+    isListModified = true;
+    saveItemsToCache();
+}
 
 
 
