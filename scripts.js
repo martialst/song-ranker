@@ -423,6 +423,28 @@ function switchMode(mode) {
     }
 }
 
+function randomizeList() {
+    if (!confirm("Are you sure you want to randomize the list? This will overwrite the current order.")) {
+        return;
+    }
+
+    const wordList = document.getElementById('wordList');
+    const items = Array.from(wordList.children);
+
+    // Fisher–Yates shuffle
+    for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+    }
+
+    // Re-append shuffled items
+    items.forEach(item => wordList.appendChild(item));
+
+    updateItemNumbers();
+    isListModified = true;
+    saveItemsToCache();
+}
+
 // Tier functionality
 const tierNames = ['S', 'A', 'B', 'C', 'D'];
 
