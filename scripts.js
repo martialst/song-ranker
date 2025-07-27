@@ -426,6 +426,35 @@ function switchMode(mode) {
 // Tier functionality
 const tierNames = ['S', 'A', 'B', 'C', 'D'];
 
+// Load saved tier data when page loads
+window.addEventListener('load', function() {
+    loadUrlMapping();
+    
+    // Check for hash fragment first
+    const hash = window.location.hash;
+    if (hash.startsWith('#id_')) {
+        const shortId = hash.substring(1);
+        const encodedRanking = urlMapping[shortId];
+        
+        if (encodedRanking) {
+            const orderedRows = JSON.parse(decodeURIComponent(encodedRanking));
+            document.getElementById('inputWords').value = orderedRows.join('\n');
+            importWords();
+            return;
+        }
+    }
+    
+    // Fall back to saved items
+    const savedItems = localStorage.getItem('rowSorterItems');
+    if (savedItems) {
+        document.getElementById('inputWords').value = savedItems;
+        importWords();
+    }
+    
+    // Load saved tier data
+    loadTierDataFromCache();
+});
+
 function importToTiers() {
     const input = document.getElementById('tierInput').value.trim().split('\n').filter(Boolean);
     const itemPool = document.getElementById('itemPool');
@@ -456,6 +485,95 @@ function importToTiers() {
     
     // Setup drop zones
     setupTierDropZones();
+    
+    // Save to cache
+    saveTierDataToCache();
+}
+
+// Save tier data to localStorage
+function saveTierDataToCache() {
+    const tierData = {
+        pool: [],
+        tiers: {}
+    };
+    
+    // Save items in pool
+    const poolItems = document.querySelectorAll('#itemPool .pool-item');
+    tierData.pool = Array.from(poolItems).map(item => item.textContent.trim());
+    
+    // Save items in each tier
+    tierNames.forEach(tier => {
+        const tierContent = document.querySelector(`[data-tier="${tier}"]`);
+        const tierItems = tierContent.querySelectorAll('.tier-item');
+        tierData.tiers[tier] = Array.from(tierItems).map(item => item.textContent.trim());
+    });
+    
+    localStorage.setItem('tierListData', JSON.stringify(tierData));
+}
+
+// Load tier data from localStorage
+function loadTierDataFromCache() {
+    const savedTierData = localStorage.getItem('tierListData');
+    if (!savedTierData) return;
+    
+    try {
+        const tierData = JSON.parse(savedTierData);
+        const itemPool = document.getElementById('itemPool');
+        
+        // Clear existing content
+        itemPool.innerHTML = '';
+        tierNames.forEach(tier => {
+            const tierContent = document.querySelector(`[data-tier="${tier}"]`);
+            if (tierContent) {
+                tierContent.innerHTML = '';
+            }
+        });
+        
+        // Restore pool items
+        if (tierData.pool) {
+            tierData.pool.forEach(songText => {
+                const item = document.createElement('div');
+                item.className = 'pool-item';
+                item.draggable = true;
+                item.textContent = songText;
+                addTierDragListeners(item);
+                itemPool.appendChild(item);
+            });
+        }
+        
+        // Restore tier items
+        if (tierData.tiers) {
+            tierNames.forEach(tier => {
+                if (tierData.tiers[tier]) {
+                    const tierContent = document.querySelector(`[data-tier="${tier}"]`);
+                    tierData.tiers[tier].forEach(songText => {
+                        const item = document.createElement('div');
+                        item.className = 'tier-item';
+                        item.draggable = true;
+                        item.textContent = songText;
+                        applyTierColor(item, tier);
+                        addTierDragListeners(item);
+                        tierContent.appendChild(item);
+                    });
+                }
+            });
+        }
+        
+        // Setup drop zones
+        setupTierDropZones();
+        
+        // Update input textarea to show all items
+        const allItems = [...tierData.pool];
+        tierNames.forEach(tier => {
+            if (tierData.tiers[tier]) {
+                allItems.push(...tierData.tiers[tier]);
+            }
+        });
+        document.getElementById('tierInput').value = allItems.join('\n');
+        
+    } catch (e) {
+        console.error('Error loading tier data from cache:', e);
+    }
 }
 
 function addTierDragListeners(item) {
@@ -517,6 +635,9 @@ function setupDropZone(element, type) {
             }
             
             this.appendChild(draggedItem);
+            
+            // Save to cache after any change
+            saveTierDataToCache();
         }
     });
 }
@@ -524,11 +645,11 @@ function setupDropZone(element, type) {
 // Function to apply tier-specific colors to items
 function applyTierColor(item, tier) {
     const tierColors = {
-        'S': '#c53030',
-        'A': '#c05621',
-        'B': '#b7791f',
-        'C': '#ab9637',
-        'D': '#38a169'
+        'S': '#dc2626', // Bright Red
+        'A': '#ea580c', // Red-Orange
+        'B': '#d97706', // Orange-Gold
+        'C': '#ca8a04', // Yellow-Gold
+        'D': '#65a30d'  // Yellow-Green
     };
     
     const color = tierColors[tier] || '#4a5568'; // Default gray if tier not found
