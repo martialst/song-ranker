@@ -404,6 +404,166 @@ function shareRanking() {
     });
 }
 
+function switchMode(mode) {
+    const rankerTab = document.getElementById('rankerTab');
+    const tierTab = document.getElementById('tierTab');
+    const rankerMode = document.getElementById('rankerMode');
+    const tierMode = document.getElementById('tierMode');
+
+    if (mode === 'ranker') {
+        rankerTab.classList.add('active');
+        tierTab.classList.remove('active');
+        rankerMode.classList.remove('hidden');
+        tierMode.classList.add('hidden');
+    } else {
+        tierTab.classList.add('active');
+        rankerTab.classList.remove('active');
+        tierMode.classList.remove('hidden');
+        rankerMode.classList.add('hidden');
+    }
+}
+
+// Tier functionality
+const tierNames = ['S', 'A', 'B', 'C', 'D'];
+
+function importToTiers() {
+    const input = document.getElementById('tierInput').value.trim().split('\n').filter(Boolean);
+    const itemPool = document.getElementById('itemPool');
+    
+    // Clear existing items
+    itemPool.innerHTML = '';
+    
+    // Clear all tier contents
+    tierNames.forEach(tier => {
+        const tierContent = document.querySelector(`[data-tier="${tier}"]`);
+        if (tierContent) {
+            tierContent.innerHTML = '';
+        }
+    });
+
+    // Add items to the pool
+    input.forEach(song => {
+        const item = document.createElement('div');
+        item.className = 'pool-item';
+        item.draggable = true;
+        item.textContent = song.trim();
+        
+        // Add drag event listeners
+        addTierDragListeners(item);
+        
+        itemPool.appendChild(item);
+    });
+    
+    // Setup drop zones
+    setupTierDropZones();
+}
+
+function addTierDragListeners(item) {
+    item.addEventListener('dragstart', function(e) {
+        draggedItem = this;
+        e.dataTransfer.effectAllowed = 'move';
+    });
+    
+    item.addEventListener('dragend', function() {
+        draggedItem = null;
+        // Remove drag-over effects from all zones
+        document.querySelectorAll('.drag-over').forEach(el => {
+            el.classList.remove('drag-over');
+        });
+    });
+}
+
+function setupTierDropZones() {
+    const itemPool = document.getElementById('itemPool');
+    const tierContents = document.querySelectorAll('.tier-content');
+    
+    // Setup item pool as drop zone
+    setupDropZone(itemPool, 'pool');
+    
+    // Setup tier contents as drop zones
+    tierContents.forEach(tierContent => {
+        setupDropZone(tierContent, 'tier');
+    });
+}
+
+function setupDropZone(element, type) {
+    element.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        this.classList.add('drag-over');
+    });
+    
+    element.addEventListener('dragleave', function(e) {
+        // Only remove drag-over if we're actually leaving the element
+        if (!this.contains(e.relatedTarget)) {
+            this.classList.remove('drag-over');
+        }
+    });
+    
+    element.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+        
+        if (draggedItem) {
+            // Change class and color based on destination
+            if (type === 'pool') {
+                draggedItem.className = 'pool-item';
+                draggedItem.style.backgroundColor = '#4a5568'; // Default pool color
+            } else {
+                draggedItem.className = 'tier-item';
+                // Apply tier-specific color
+                const tier = this.getAttribute('data-tier');
+                applyTierColor(draggedItem, tier);
+            }
+            
+            this.appendChild(draggedItem);
+        }
+    });
+}
+
+// Function to apply tier-specific colors to items
+function applyTierColor(item, tier) {
+    const tierColors = {
+        'S': '#c53030',
+        'A': '#c05621',
+        'B': '#b7791f',
+        'C': '#ab9637',
+        'D': '#38a169'
+    };
+    
+    const color = tierColors[tier] || '#4a5568'; // Default gray if tier not found
+    item.style.backgroundColor = color;
+}
+
+function exportTierList() {
+    const tierList = {};
+    
+    // Get items from each tier
+    tierNames.forEach(tier => {
+        const tierContent = document.querySelector(`[data-tier="${tier}"]`);
+        const items = tierContent.querySelectorAll('.tier-item');
+        tierList[tier] = Array.from(items).map(el => el.textContent.trim());
+    });
+    
+    // Get items still in pool
+    const poolItems = document.querySelectorAll('.pool-item');
+    const unranked = Array.from(poolItems).map(el => el.textContent.trim());
+    
+    let output = '';
+    for (const tier of tierNames) {
+        if (tierList[tier].length > 0) {
+            output += `${tier} Tier:\n${tierList[tier].join('\n')}\n\n`;
+        }
+    }
+    
+    if (unranked.length > 0) {
+        output += `Unranked:\n${unranked.join('\n')}\n\n`;
+    }
+
+    document.getElementById('tierOutput').value = output.trim();
+}
+
+
 // Event listeners setup
 document.addEventListener('DOMContentLoaded', function() {
     // Color picker event listeners

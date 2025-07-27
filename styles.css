@@ -25,7 +25,7 @@ body {
 	justify-content: space-between; 
 	align-items: flex-start;
 	width: 80%;
-	height: 90vh; /* Height reduced to avoid overflow */
+	height: 90vh;
 	background-color: rgba(255, 255, 255, 0.8);
 	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 	padding: 20px;
@@ -35,15 +35,197 @@ body {
 	position: relative; /* Ensure it stays in place */
 }
 
+.nav-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 00px;
+    gap: 0px;
+}
+
+.tab {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #2d3748;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;	
+}
+
+.tab.active {
+    background-color: #4299e1;
+}
+
+/* Tier mode container */
+#tierMode .container {
+    flex-direction: column;
+    height: auto;
+    min-height: 80vh;
+    width: 90vw !important;
+    max-width: 1400px;
+    min-width: 800px;
+    box-sizing: border-box;
+}
+
+/* Force ranker mode to also use viewport width for consistency */
+#rankerMode .container {
+    width: 80vw !important;
+    min-width: 800px;
+    box-sizing: border-box;
+}
+
+#tierMode .import-section {
+    width: 45%;
+    height: auto;
+}
+
+#tierMode .export-section {
+    width: 45%;
+    height: auto;
+}
+
+/* Container for import/export sections */
+.tier-import-export-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 250px;
+	gap: 0px;
+    margin-bottom: 20px;
+}
+
+/* Main tier container */
+.tier-container {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    min-height: 500px;
+    align-items: flex-start;
+    flex: 1;
+}
+
+/* Item pool (left side) */
+.item-pool {
+    width: 160px;
+    flex-shrink: 0;
+    background-color: #a0a0a0;
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 400px;
+}
+
+/* Tier list area (right side) */
+.tier-list-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Individual tier rows */
+.tier-row {
+    display: flex;
+    min-height: 80px;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Tier label */
+.tier-label {
+    width: 60px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 24px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Tier content area */
+.tier-content {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.3);
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: flex-start;
+    align-content: flex-start;
+    min-height: 80px;
+    max-height: none;
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    box-sizing: border-box;
+}
+
+/* Tier colors */
+.tier-s .tier-label { background-color: #c53030; }
+.tier-a .tier-label { background-color: #c05621; }
+.tier-b .tier-label { background-color: #b7791f; }
+.tier-c .tier-label { background-color: #ab9637; }
+.tier-d .tier-label { background-color: #38a169; }
+
+/* Tier items in the tier list */
+.tier-item {
+    background-color: #4a5568;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: move;
+    user-select: none;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.tier-item:hover {
+    background-color: #2d3748;
+    transform: translateY(-1px);
+}
+
+/* Items in the pool */
+.pool-item {
+    background-color: #4a5568;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: move;
+    user-select: none;
+    font-size: 14px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.pool-item:hover {
+    background-color: #2d3748;
+    transform: translateY(-1px);
+}
+
+/* Drag over effects */
+.tier-content.drag-over {
+    border-color: #4299e1;
+    background-color: rgba(66, 153, 225, 0.2);
+}
+
+.item-pool.drag-over {
+    background-color: #909090;
+}
+
 /* Import and Export Sections */
 .import-section, .export-section {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	width: 20%; /* Adjusted to 20% for both sections */
+	width: 20%;
 	height: 100%;
 	padding: 10px;
-	box-sizing: border-box; /* Ensures padding doesn't increase width */
+	box-sizing: border-box;
 }
 
 /* Add margin to the draggable list to create space */
@@ -58,7 +240,7 @@ body {
 	border-radius: 10px;
 	background-color: #f8fafc50;
 	margin-left: 20px;
-	box-sizing: border-box; /* Ensures padding doesn't overflow */
+	box-sizing: border-box;
 }
 
 textarea {
@@ -135,18 +317,18 @@ button:hover {
 /* Draggable List (Center) */
 .word-item {
 	display: flex;
-	align-items: center; /* Center items vertically */
-	padding: 3px 20px; /* Adjust padding */
+	align-items: center;
+	padding: 3px 20px;
 	background-color: #4a5568;
 	color: white;
 	border-radius: 15px;
 	cursor: move;
 	user-select: none;
-	text-align: left; /* Keep text aligned to the left */
+	text-align: left;
 	font-size: 16px;
 	transition: all 0.3s ease;
 	font-family: 'Inter', sans-serif;
-	position: relative; /* Allow absolute positioning for buttons */
+	position: relative;
 }
 
 .word-item-number {
@@ -221,15 +403,15 @@ p {
 
 /* Results Section */
 .results-section {
-	margin-top: 40px; /* Space below the main container */
-	width: 90%; /* Full width below the container */
+	margin-top: 40px;
+	width: 90%;
 	padding: 20px;
 }
 
 .results-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Dynamic columns */
-	grid-auto-flow: row; /* Flow items top-down first */
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr))
+	grid-auto-flow: row;
 	gap: 15px;
 	width: 100%;
 	padding: 20px;
@@ -272,7 +454,7 @@ html {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	margin-bottom: 10px; /* Adjust this for spacing */
+	margin-bottom: 10px;
 }
 
 input[type="color"] {
@@ -285,22 +467,22 @@ input[type="color"] {
 }
 
 .text-wrapper {
-	flex-grow: 1; /* Allow this div to take available space */
-	display: flex; /* Use flex to align the number and text */
-	align-items: center; /* Center items vertically */
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
 }
 
 .move-button {
-	margin-left: 10px; /* Space between text and buttons */
-	padding: 5px 8px; /* Button padding */
-	color: white; /* Button text color */
-	border: none; /* No border */
-	border-radius: 5px; /* Rounded corners */
-	cursor: pointer; /* Pointer cursor on hover */
+	margin-left: 10px;
+	padding: 5px 8px;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
 }
 
 .move-button:hover {
-	background-color: #3182ce; /* Darker shade on hover */
+	background-color: #3182ce;
 }
 
 .toggle {
@@ -324,15 +506,15 @@ input[type="checkbox"] {
 	border: none;
 	border-radius: 5px;
 	cursor: pointer;
-	opacity: 0; /* Start with invisible buttons */
+	opacity: 0;
 	transition: opacity 0.2s ease, background-color 0.3s ease;
-	visibility: hidden; /* Completely hide them, not just make transparent */
+	visibility: hidden;
 }
 
 /* Show buttons on hover */
 .word-item:hover .move-button {
-	opacity: 1; /* Make buttons visible */
-	visibility: visible; /* Make them appear */
+	opacity: 1;
+	visibility: visible;
 }
 
 /* Style for different button types */
@@ -343,7 +525,7 @@ input[type="checkbox"] {
 /* Optional: make buttons smaller and more compact */
 .button-group {
 	display: flex;
-	margin-left: auto; /* Push buttons to the right */
+	margin-left: auto;
 }
 
 .hidden {

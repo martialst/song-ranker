@@ -11,49 +11,101 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <!-- Import Section (Left) -->        
-        <div class="import-section">
-            <textarea id="inputWords" placeholder="Paste your song names here..."></textarea>
-            <button onclick="importWords()" class="blue-button">Import Songs</button>
-            <div class="randomize-wrapper">
-				<button onclick="randomizeList()" class="randomize-button subtle">🎲 Randomize</button>
+	<div class="nav-tabs">
+		<button id="rankerTab" class="tab active" onclick="switchMode('ranker')">Ranker</button>
+		<button id="tierTab" class="tab" onclick="switchMode('tier')">Tier List</button>
+	</div>
+	<div id="rankerMode">
+		<div class="container">
+			<!-- Import Section (Left) -->        
+			<div class="import-section">
+				<textarea id="inputWords" placeholder="Paste your song names here..."></textarea>
+				<button onclick="importWords()" class="blue-button">Import Songs</button>
+				<div class="randomize-wrapper">
+					<button onclick="randomizeList()" class="randomize-button subtle">🎲 Randomize</button>
+				</div>
 			</div>
-        </div>
 
-        <!-- Draggable Row List (Center) -->
-        <div id="wordList" class="word-list"></div>
-        
-        <!-- Export Section (Right) -->
-        <div class="export-section">
-            <textarea id="outputWords" placeholder="Sorted songlist will appear here..." readonly></textarea>
-            <label class="toggle">
-                <input type="checkbox" id="showNumbersToggle">                
-				<span>Show with ranking numbers</span>                
-            </label>            
-			<button onclick="exportWords()" class="blue-button">Get Ranked List</button>
-            <button onclick="showResults()" class="blue-button">Show Results</button>
-        </div>
-    </div>    
+			<!-- Draggable Row List (Center) -->
+			<div id="wordList" class="word-list"></div>
+			
+			<!-- Export Section (Right) -->
+			<div class="export-section">
+				<textarea id="outputWords" placeholder="Sorted songlist will appear here..." readonly></textarea>
+				<label class="toggle">
+					<input type="checkbox" id="showNumbersToggle">                
+					<span>Show with ranking numbers</span>                
+				</label>            
+				<button onclick="exportWords()" class="blue-button">Get Ranked List</button>
+				<button onclick="showResults()" class="blue-button">Show Results</button>
+			</div>
+		</div>    
 
-    <!-- Hidden Results Section -->
-    <div id="resultsSection" class="results-section hidden">
-        <h2>Your Ranked Songs</h2>
-        <div class="color-picker-container">
-            <p>Item:</p>
-            <input type="color" id="startColorPicker" value="#009439">                    
-            <input type="color" id="endColorPicker" value="#731212">
-            <p>Text:</p>
-            <input type="color" id="textColorPicker" value="#FFFFFF">
-            <p>Background:</p>
-            <input type="color" id="panelBgColorPicker" value="#FFFFFF">
-            <label class="toggle">
-                <span>Gradual Gradient Mode:</span>
-                <input type="checkbox" id="gradientModeToggle">                
-            </label>
-        </div>
-        <div id="resultsGrid" class="results-grid"></div>
-    </div>
+		<!-- Hidden Results Section -->
+		<div id="resultsSection" class="results-section hidden">
+			<h2>Your Ranked Songs</h2>
+			<div class="color-picker-container">
+				<p>Item:</p>
+				<input type="color" id="startColorPicker" value="#009439">                    
+				<input type="color" id="endColorPicker" value="#731212">
+				<p>Text:</p>
+				<input type="color" id="textColorPicker" value="#FFFFFF">
+				<p>Background:</p>
+				<input type="color" id="panelBgColorPicker" value="#FFFFFF">
+				<label class="toggle">
+					<span>Gradual Gradient Mode:</span>
+					<input type="checkbox" id="gradientModeToggle">                
+				</label>
+			</div>
+			<div id="resultsGrid" class="results-grid"></div>
+		</div>
+	</div>
+	<div id="tierMode" class="hidden">
+		<div class="container">
+			<div class="tier-import-export-container">
+				<div class="import-section">
+					<textarea id="tierInput" placeholder="Paste your song names here..."></textarea>
+					<button onclick="importToTiers()" class="blue-button">Import Songs</button>
+				</div>
+				
+				<div class="export-section">
+					<textarea id="tierOutput" placeholder="Tier list output..." readonly></textarea>
+					<button onclick="exportTierList()" class="blue-button">Export Tier List</button>
+				</div>
+			</div>
+			
+			<div class="tier-container">
+				<!-- Item Pool (Left) -->
+				<div class="item-pool" id="itemPool">
+					<!-- Items will be populated here -->
+				</div>
+				
+				<!-- Tier List Area (Right) -->
+				<div class="tier-list-area" id="tierListArea">
+					<div class="tier-row tier-s">
+						<div class="tier-label">S</div>
+						<div class="tier-content" data-tier="S"></div>
+					</div>
+					<div class="tier-row tier-a">
+						<div class="tier-label">A</div>
+						<div class="tier-content" data-tier="A"></div>
+					</div>
+					<div class="tier-row tier-b">
+						<div class="tier-label">B</div>
+						<div class="tier-content" data-tier="B"></div>
+					</div>
+					<div class="tier-row tier-c">
+						<div class="tier-label">C</div>
+						<div class="tier-content" data-tier="C"></div>
+					</div>
+					<div class="tier-row tier-d">
+						<div class="tier-label">D</div>
+						<div class="tier-content" data-tier="D"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
     <script src="scripts.js"></script>
 </body>
 </html>
