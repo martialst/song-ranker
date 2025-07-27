@@ -667,11 +667,11 @@ function setupDropZone(element, type) {
 // Function to apply tier-specific colors to items
 function applyTierColor(item, tier) {
     const tierColors = {
-        'S': '#dc2626', // Bright Red
-        'A': '#ea580c', // Red-Orange
-        'B': '#d97706', // Orange-Gold
-        'C': '#ca8a04', // Yellow-Gold
-        'D': '#65a30d'  // Yellow-Green
+		'S': '#c53030',
+        'A': '#c05621',
+        'B': '#b7791f',
+        'C': '#ab9637',
+        'D': '#38a169'
     };
     
     const color = tierColors[tier] || '#4a5568'; // Default gray if tier not found
