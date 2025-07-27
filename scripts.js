@@ -343,18 +343,34 @@ function showResults(isGradual = false) {
     const wordElements = document.querySelectorAll('.word-item');
     const totalItems = wordElements.length;
 
-    const orderedRows = Array.from(wordElements).map((item, index) => {
-        const percent = isGradual ? 
-            Math.floor(index / 10) / (totalItems / 10) : 
-            index / (totalItems - 1);
-        
-        const backgroundColor = generateGradientColor(startColor, endColor, percent);
+	const orderedRows = Array.from(wordElements).map((item, index) => {
+		let percent;
+		const itemsPerSection = 10;
 
-        return `<div class="result-item" style="background-color: ${backgroundColor}">
-                    <span class="result-number">${index + 1}.</span>
-                    <span>${item.querySelector('span:nth-child(2)').textContent}</span>
-                </div>`;
-    });
+		if (isGradual) {
+			const currentSectionIndex = Math.floor(index / itemsPerSection);
+
+			const totalSections = Math.ceil(totalItems / itemsPerSection);
+
+			if (totalSections === 0) {
+				percent = 0;
+			} else if (totalSections === 1) {
+				percent = 0.5;
+			} else {
+				percent = currentSectionIndex / (totalSections - 1);
+			}
+		} else {			
+			percent = totalItems === 1 ? 0.5 : index / (totalItems - 1);
+		}
+
+		const backgroundColor = generateGradientColor(startColor, endColor, percent);
+
+		return `<div class="result-item" style="background-color: ${backgroundColor}">
+					<span class="result-number">${index + 1}.</span>
+					<span>${item.querySelector('span:nth-child(2)').textContent}</span>
+				</div>`;
+	});
+
 
     resultsGrid.innerHTML = orderedRows.join('');
     resultsSection.classList.remove('hidden');

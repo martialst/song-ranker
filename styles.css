@@ -402,9 +402,11 @@ button:hover {
 
 h2 {
 	color: #ffffff;
+	text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 p {
 	color: #ffffff;
+	text-shadow: 2px 2px 3px rgba(0,0,0,0.8);
 }
 
 /* Results Section */
