@@ -18,6 +18,36 @@ body {
 	overflow-x: hidden; /* Prevent any weird horizontal overflows */
 }
 
+.nav-tabs {
+    display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+    margin-bottom: 0px;
+	margin-left: 50px;
+    gap: 0px;
+	width: 80%;
+}
+
+.tab {
+    padding: 8px 30px;
+    font-size: 16px;
+    background-color: #d7d8d9;
+    color: black;
+    border: none;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;	
+}
+
+.tab.active {
+    background-color: #f7f7f7;
+}
+
+.tab:hover {
+    background-color: #f7f7f7;
+    transform: translateY(2px);
+}
+
 /* Main container remains stable */
 .container {
 	display: flex;
@@ -35,36 +65,12 @@ body {
 	position: relative; /* Ensure it stays in place */
 }
 
-.nav-tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 00px;
-    gap: 0px;
-}
-
-.tab {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #2d3748;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-family: 'Poppins', sans-serif;	
-}
-
-.tab.active {
-    background-color: #4299e1;
-}
-
 /* Tier mode container */
 #tierMode .container {
     flex-direction: column;
     height: auto;
     min-height: 80vh;
-    width: 90vw !important;
-    max-width: 1400px;
-    min-width: 800px;
+    width: 80vw !important;
     box-sizing: border-box;
 }
 
