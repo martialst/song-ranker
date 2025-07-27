@@ -1,6 +1,7 @@
 let draggedItem = null;
 let draggingOverItem = null;
 let isListModified = false;
+let isTierListModified = false;
 let scrollInterval = null;
 let markedItems = new Set();
 let urlMapping = {};
@@ -497,6 +498,10 @@ function importToTiers() {
     const input = document.getElementById('tierInput').value.trim().split('\n').filter(Boolean);
     const itemPool = document.getElementById('itemPool');
     
+	if (isTierListModified && !confirm("You have unsaved changes. Do you really want to reset the list?")) {
+        return;
+    }
+	
     // Clear existing items
     itemPool.innerHTML = '';
     
@@ -592,6 +597,8 @@ function loadTierDataFromCache() {
                         applyTierColor(item, tier);
                         addTierDragListeners(item);
                         tierContent.appendChild(item);
+						
+						isTierListModified = true;
                     });
                 }
             });
@@ -676,6 +683,8 @@ function setupDropZone(element, type) {
             
             // Save to cache after any change
             saveTierDataToCache();
+			
+			isTierListModified = true;
         }
     });
 }
