@@ -409,9 +409,11 @@ p {
 
 /* Results Section */
 .results-section {
-	margin-top: 40px;
-	width: 90%;
-	padding: 20px;
+	margin-top: 80px;
+	width: 110%;
+	padding: 0px;
+	margin-left: -5%;
+    margin-right: 5%;
 }
 
 .results-grid {
@@ -441,6 +443,8 @@ p {
 	text-align: left;
 	font-family: 'Inter', sans-serif;
 	font-weight: bold;
+	width: auto; /* Ensure items don't expand to full width */
+	max-width: 100%; /* But don't exceed container */
 }
 
 .result-number {
@@ -448,6 +452,17 @@ p {
 	font-weight: bold;
 	color: #000000;
 	font-weight: bold;
+}
+
+/* Ensure ranker mode results maintain grid layout */
+#rankerMode .results-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+}
+
+#rankerMode .result-item {
+    width: auto !important;
+    max-width: 100% !important;
 }
 
 /* Smooth scrolling ensures page doesn't jump */
