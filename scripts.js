@@ -424,19 +424,27 @@ function shareRanking() {
 function switchMode(mode) {
     const rankerTab = document.getElementById('rankerTab');
     const tierTab = document.getElementById('tierTab');
+    const gamesTab = document.getElementById('gamesTab');
     const rankerMode = document.getElementById('rankerMode');
     const tierMode = document.getElementById('tierMode');
+    const gamesMode = document.getElementById('gamesMode');
+
+    rankerTab.classList.remove('active');
+    tierTab.classList.remove('active');
+    gamesTab.classList.remove('active');
+    rankerMode.classList.add('hidden');
+    tierMode.classList.add('hidden');
+    gamesMode.classList.add('hidden');
 
     if (mode === 'ranker') {
         rankerTab.classList.add('active');
-        tierTab.classList.remove('active');
         rankerMode.classList.remove('hidden');
-        tierMode.classList.add('hidden');
-    } else {
+    } else if (mode === 'tier') {
         tierTab.classList.add('active');
-        rankerTab.classList.remove('active');
         tierMode.classList.remove('hidden');
-        rankerMode.classList.add('hidden');
+    } else if (mode === 'games') {
+        gamesTab.classList.add('active');
+        gamesMode.classList.remove('hidden');
     }
 }
 
@@ -732,6 +740,188 @@ function exportTierList() {
 }
 
 
+
+//==========
+//GAMES SECTION
+//==========
+function loadRankedSongs() {
+    const savedItems = localStorage.getItem('rowSorterItems');
+    const statusEl = document.getElementById('importStatus');
+
+    if (!savedItems) {
+        statusEl.textContent = "No ranked songs found! Please rank songs first.";
+        statusEl.style.color = "red";
+        return;
+    }
+    statusEl.textContent = "Ranked songs imported successfully!";
+    statusEl.style.color = "green";
+}
+
+function seededRandom(seed) {
+    let h = 0;
+    for (let i = 0; i < seed.length; i++) {
+        h = Math.imul(31, h) + seed.charCodeAt(i) | 0;
+    }
+    return function() {
+        h ^= h << 13; h ^= h >>> 17; h ^= h << 5;
+        return ((h < 0 ? ~h + 1 : h) % 1000) / 1000;
+    };
+}
+
+function generateTopBottom10Game() {
+    const savedItems = localStorage.getItem('rowSorterItems');
+    if (!savedItems) {
+        document.getElementById('importStatus').textContent = "No ranked songs found!";
+        document.getElementById('importStatus').style.color = "red";
+        return;
+    }
+
+    const songs = savedItems.split('\n').filter(Boolean);
+    if (songs.length < 20) {
+        document.getElementById('importStatus').textContent = "Need at least 20 ranked songs!";
+        document.getElementById('importStatus').style.color = "red";
+        return;
+    }
+
+    const top10 = songs.slice(0, 10);
+    const bottom10 = songs.slice(-10);
+
+    // Seeded random based on concatenated names
+    const seed = songs.join('');
+    const rand = seededRandom(seed);
+
+    // Pick 5 unique hidden indexes for each list
+    function pickHidden(count, max) {
+        let set = new Set();
+        while (set.size < count) {
+            set.add(Math.floor(rand() * max));
+        }
+        return set;
+    }
+
+    const topHidden = pickHidden(5, 10);
+    const bottomHidden = pickHidden(5, 10);
+
+    // Build top 10 list
+    const topListEl = document.getElementById('top10GameList');
+    topListEl.innerHTML = '';
+    top10.forEach((song, i) => {
+        const item = document.createElement('div');
+        if (topHidden.has(i)) {
+            item.className = 'song-item song-item-hidden';
+            item.textContent = `???`;
+        } else {
+            item.className = 'song-item song-item-revealed';
+            item.textContent = `${i + 1}. ${song}`;
+        }
+        topListEl.appendChild(item);
+    });
+
+    // Build bottom 10 list
+    const bottomListEl = document.getElementById('bottom10GameList');
+    bottomListEl.innerHTML = '';
+    bottom10.forEach((song, i) => {
+        const rank = songs.length - 10 + i + 1;
+        const item = document.createElement('div');
+        if (bottomHidden.has(i)) {
+            item.className = 'song-item song-item-hidden';
+            item.textContent = `???`;
+        } else {
+            item.className = 'song-item song-item-revealed';
+            item.textContent = `${rank}. ${song}`;
+        }
+        bottomListEl.appendChild(item);
+    });
+
+    // Show results container
+    document.getElementById('topBottomGameResult').classList.remove('hidden');
+}
+
+function generateChaoticTopBottomGame() {
+    const savedItems = localStorage.getItem('rowSorterItems');
+    if (!savedItems) {
+        document.getElementById('importStatus').textContent = "No ranked songs found!";
+        document.getElementById('importStatus').style.color = "red";
+        return;
+    }
+
+    const songs = savedItems.split('\n').filter(Boolean);
+    if (songs.length < 20) {
+        document.getElementById('importStatus').textContent = "Need at least 20 ranked songs!";
+        document.getElementById('importStatus').style.color = "red";
+        return;
+    }
+
+    const top10 = songs.slice(0, 10);
+    const bottom10 = songs.slice(-10);
+
+    // Remaining pool to pick decoys from (excluding top & bottom 10)
+    const middleSongs = songs.slice(10, -10);
+
+    // Seeded random based on full ranking (so chaos is consistent)
+    const seed = songs.join('chaos');
+    const rand = seededRandom(seed);
+
+    function mixWithDecoys(list, listName) {
+        const mixed = [...list];
+        // Decide how many decoys (e.g., 3 random replacements)
+        const decoyCount = Math.min(3, middleSongs.length);
+        const usedIndexes = new Set();
+
+        for (let i = 0; i < decoyCount; i++) {
+            const replaceIndex = Math.floor(rand() * mixed.length);
+            if (usedIndexes.has(replaceIndex)) continue;
+            usedIndexes.add(replaceIndex);
+
+            const decoy = middleSongs[Math.floor(rand() * middleSongs.length)];
+            mixed[replaceIndex] = decoy;
+        }
+        return mixed;
+    }
+
+    const chaoticTop = mixWithDecoys(top10, "Top");
+    const chaoticBottom = mixWithDecoys(bottom10, "Bottom");
+
+    // Render top chaotic list
+    const topListEl = document.getElementById('chaoticTopList');
+    topListEl.innerHTML = '';
+    chaoticTop.forEach((song, i) => {
+        const item = document.createElement('div');
+        item.className = 'song-item song-item-revealed';
+        item.textContent = `${i + 1}. ${song}`;
+        topListEl.appendChild(item);
+    });
+
+    // Render bottom chaotic list
+    const bottomListEl = document.getElementById('chaoticBottomList');
+    bottomListEl.innerHTML = '';
+    chaoticBottom.forEach((song, i) => {
+        const rank = songs.length - 10 + i + 1;
+        const item = document.createElement('div');
+        item.className = 'song-item song-item-revealed';
+        item.textContent = `${rank}. ${song}`;
+        bottomListEl.appendChild(item);
+    });
+
+    document.getElementById('chaoticGameResult').classList.remove('hidden');
+}
+
+function updateGamePanelBgColor() {
+    const hexColor = document.getElementById('gameBgColorPicker').value;
+    const r = parseInt(hexColor.slice(1, 3), 16);
+    const g = parseInt(hexColor.slice(3, 5), 16);
+    const b = parseInt(hexColor.slice(5, 7), 16);
+    const rgba = `rgba(${r}, ${g}, ${b}, 0.8)`;
+    
+    document.querySelectorAll('.game-section').forEach(section => {
+        section.style.backgroundColor = rgba;
+    });
+
+}
+
+
+
+
 // Event listeners setup
 document.addEventListener('DOMContentLoaded', function() {
     // Color picker event listeners
@@ -740,10 +930,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('textColorPicker').addEventListener('input', updateTextColor);
     document.getElementById('panelBgColorPicker').addEventListener('input', updatePanelBgColor);
     document.getElementById('gradientModeToggle').addEventListener('change', toggleGradientMode);
+    document.getElementById('gameBgColorPicker').addEventListener('input', updateGamePanelBgColor);
     
     // Share button (if it exists)
     const shareButton = document.getElementById('shareButton');
     if (shareButton) {
         shareButton.addEventListener('click', shareRanking);
+    }
+
+    const game1Picker = document.getElementById('gameBgColorPicker');
+    if (game1Picker) {
+        game1Picker.addEventListener('input', (e) => {
+            const section = game1Picker.closest('.game-section');
+            if (section) {
+                section.style.backgroundColor = e.target.value;
+            }
+        });
     }
 });

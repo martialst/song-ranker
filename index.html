@@ -14,6 +14,7 @@
 	<div class="nav-tabs">
 		<button id="rankerTab" class="tab active" onclick="switchMode('ranker')">Ranker</button>
 		<button id="tierTab" class="tab" onclick="switchMode('tier')">Tier List</button>
+		<button id="gamesTab" class="tab" onclick="switchMode('games')">Top/Bottom 10</button>
 	</div>
 	<div id="rankerMode">
 		<div class="container">
@@ -104,6 +105,62 @@
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+	
+	<!-- Games Mode -->	
+	<div id="gamesMode" class="hidden">
+		<div class="container games-container">
+
+			<!-- Import Control -->
+			<div class="games-controls">
+				<p class="black-text">This page uses the ranking from the Ranker page.</p>
+				<p class="black-text">You only need to sort the top 10 and bottom 10 for this to work.</p>
+				<button onclick="loadRankedSongs()" class="blue-button">Import Ranked Songs</button>
+				<span id="importStatus" class="import-status"></span>
+
+				<p class="black-text">Both modes obfuscate half of your top/bottom 10 randomly.</p>
+				<p class="black-text">DECIDE which type of list you like more and post ONLY that one on Discord!</p>
+				<div class="color-picker-wrapper">
+					<label for="gameBgPicker">Color picker:</label>
+					<input type="color" id="gameBgColorPicker" value="#362D2D">
+				</div>
+			</div>
+
+			<!-- Game 1: Top & Bottom 10 -->
+			<div id="gameSection" class="game-section">
+				<h2>My Top & Bottom 10 - Hidden Mode</h2>
+				<div id="topBottomGameResult" class="top-bottom-container hidden">
+					<div class="top10-list">
+						<h3>Top 10</h3>
+						<div id="top10GameList" class="song-list"></div>
+					</div>
+					<div class="bottom10-list">
+						<h3>Bottom 10</h3>
+						<div id="bottom10GameList" class="song-list"></div>
+					</div>
+				</div>				
+			</div>
+			<button onclick="generateTopBottom10Game()" class="blue-button">Generate</button>
+			<!-- Game 2: Chaotic Top & Bottom 10 -->
+			<div id="gameSection" class="game-section">
+				<h2>Top & Bottom 10 - Decoy Mode</h2>
+				<p>Half of the songs are replaced with random songs.</p>
+				<div id="chaoticGameResult" class="top-bottom-container hidden">
+					<div class="top10-list">
+						<h3>Top 10</h3>
+						<div id="chaoticTopList" class="song-list"></div>
+					</div>
+					<div class="bottom10-list">
+						<h3>Bottom 10</h3>
+						<div id="chaoticBottomList" class="song-list"></div>
+					</div>
+				</div>
+				<p></p>				
+			</div>
+			<button onclick="generateChaoticTopBottomGame()" class="blue-button">Generate</button>
+			<!-- Future games will go here stacked below -->
+					
 		</div>
 	</div>
     <script src="scripts.js"></script>
