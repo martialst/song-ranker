@@ -864,11 +864,11 @@ function generateChaoticTopBottomGame() {
 
     function mixWithDecoys(list, listName) {
         const mixed = [...list];
-        // Decide how many decoys (e.g., 3 random replacements)
-        const decoyCount = Math.min(3, middleSongs.length);
+        const decoyCount = Math.min(5, middleSongs.length);
+
         const usedIndexes = new Set();
 
-        for (let i = 0; i < decoyCount; i++) {
+        while (usedIndexes.size < decoyCount) {
             const replaceIndex = Math.floor(rand() * mixed.length);
             if (usedIndexes.has(replaceIndex)) continue;
             usedIndexes.add(replaceIndex);
@@ -876,6 +876,7 @@ function generateChaoticTopBottomGame() {
             const decoy = middleSongs[Math.floor(rand() * middleSongs.length)];
             mixed[replaceIndex] = decoy;
         }
+
         return mixed;
     }
 
