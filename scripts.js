@@ -783,24 +783,31 @@ function generateTopBottom10Game() {
         return;
     }
 
+    const isHiddenTop1 = document.getElementById('hiddenTop1Toggle').checked;
+    const isHiddenBottom1 = document.getElementById('hiddenBottom1Toggle').checked;
+    const isFixedRandom = document.getElementById('fixedRandomToggle').checked;
+
     const top10 = songs.slice(0, 10);
     const bottom10 = songs.slice(-10);
 
-    // Seeded random based on concatenated names
+    // Pick random generator
     const seed = songs.join('');
-    const rand = seededRandom(seed);
+    const rand = isFixedRandom ? seededRandom(seed) : Math.random;
 
-    // Pick 5 unique hidden indexes for each list
-    function pickHidden(count, max) {
-        let set = new Set();
+    // Pick N unique indexes to hide
+    function pickHidden(count, max, forceIndexes = []) {
+        let set = new Set(forceIndexes);
         while (set.size < count) {
             set.add(Math.floor(rand() * max));
         }
         return set;
     }
 
-    const topHidden = pickHidden(5, 10);
-    const bottomHidden = pickHidden(5, 10);
+    // Ensure first/top1 is hidden if toggle is active
+    const topHidden = pickHidden(5, 10, isHiddenTop1 ? [0] : []);
+
+    // Ensure last/bottom1 is hidden if toggle is active
+    const bottomHidden = pickHidden(5, 10, isHiddenBottom1 ? [bottom10.length - 1] : []);
 
     // Build top 10 list
     const topListEl = document.getElementById('top10GameList');
@@ -837,6 +844,7 @@ function generateTopBottom10Game() {
     document.getElementById('topBottomGameResult').classList.remove('hidden');
 }
 
+
 function generateChaoticTopBottomGame() {
     const savedItems = localStorage.getItem('rowSorterItems');
     if (!savedItems) {
@@ -852,21 +860,40 @@ function generateChaoticTopBottomGame() {
         return;
     }
 
+    const isHiddenTop1 = document.getElementById('hiddenTop1Toggle').checked;
+    const isHiddenBottom1 = document.getElementById('hiddenBottom1Toggle').checked;
+    const isFixedRandom = document.getElementById('fixedRandomToggle').checked;
+
     const top10 = songs.slice(0, 10);
     const bottom10 = songs.slice(-10);
 
     // Remaining pool to pick decoys from (excluding top & bottom 10)
     const middleSongs = songs.slice(10, -10);
 
-    // Seeded random based on full ranking (so chaos is consistent)
+    // Choose random function: seeded or pure random
     const seed = songs.join('chaos');
-    const rand = seededRandom(seed);
+    const rand = isFixedRandom ? seededRandom(seed) : Math.random;
 
     function mixWithDecoys(list, listName) {
         const mixed = [...list];
         const decoyCount = Math.min(5, middleSongs.length);
 
         const usedIndexes = new Set();
+
+        // Force replace top1 if enabled
+        if (listName === "Top" && isHiddenTop1 && middleSongs.length > 0) {
+            const decoy = middleSongs[Math.floor(rand() * middleSongs.length)];
+            mixed[0] = decoy;
+            usedIndexes.add(0);
+        }
+
+        // Force replace bottom1 if enabled
+        if (listName === "Bottom" && isHiddenBottom1 && middleSongs.length > 0) {
+            const lastIndex = mixed.length - 1;
+            const decoy = middleSongs[Math.floor(rand() * middleSongs.length)];
+            mixed[lastIndex] = decoy;
+            usedIndexes.add(lastIndex);
+        }
 
         while (usedIndexes.size < decoyCount) {
             const replaceIndex = Math.floor(rand() * mixed.length);
@@ -906,6 +933,7 @@ function generateChaoticTopBottomGame() {
 
     document.getElementById('chaoticGameResult').classList.remove('hidden');
 }
+
 
 function updateGamePanelBgColor() {
     const hexColor = document.getElementById('gameBgColorPicker').value;
