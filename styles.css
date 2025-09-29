@@ -626,6 +626,11 @@ input[type="checkbox"] {
     color: white;
 }
 
+.song-item-revealed-type2 {
+	background-color: #a0aec0;
+    color: #2d3748;    
+}
+
 /* Hidden (??? songs) */
 .song-item-hidden {
     background-color: #a0aec0;

@@ -898,7 +898,7 @@ function generateChaoticTopBottomGame() {
     chaoticBottom.forEach((song, i) => {
         const rank = songs.length - 10 + i + 1;
         const item = document.createElement('div');
-        item.className = 'song-item song-item-revealed';
+        item.className = 'song-item song-item-revealed-type2';
         item.textContent = `${rank}. ${song}`;
         bottomListEl.appendChild(item);
     });
@@ -936,15 +936,5 @@ document.addEventListener('DOMContentLoaded', function() {
     const shareButton = document.getElementById('shareButton');
     if (shareButton) {
         shareButton.addEventListener('click', shareRanking);
-    }
-
-    const game1Picker = document.getElementById('gameBgColorPicker');
-    if (game1Picker) {
-        game1Picker.addEventListener('input', (e) => {
-            const section = game1Picker.closest('.game-section');
-            if (section) {
-                section.style.backgroundColor = e.target.value;
-            }
-        });
     }
 });
