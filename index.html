@@ -74,6 +74,13 @@
 					<button onclick="exportTierList()" class="blue-button">Export Tier List</button>
 				</div>
 			</div>
+
+			<div class="tier-controls">
+				<span class="tier-controls-label">Tier count</span>
+				<button class="tier-control-button" id="decreaseTierCount" type="button" aria-label="Decrease tier count">−</button>
+				<span id="tierCountDisplay" class="tier-count-display">5</span>
+				<button class="tier-control-button" id="increaseTierCount" type="button" aria-label="Increase tier count">+</button>
+			</div>
 			
 			<div class="tier-container">
 				<!-- Item Pool (Left) -->
@@ -82,28 +89,7 @@
 				</div>
 				
 				<!-- Tier List Area (Right) -->
-				<div class="tier-list-area" id="tierListArea">
-					<div class="tier-row tier-s">
-						<div class="tier-label">S</div>
-						<div class="tier-content" data-tier="S"></div>
-					</div>
-					<div class="tier-row tier-a">
-						<div class="tier-label">A</div>
-						<div class="tier-content" data-tier="A"></div>
-					</div>
-					<div class="tier-row tier-b">
-						<div class="tier-label">B</div>
-						<div class="tier-content" data-tier="B"></div>
-					</div>
-					<div class="tier-row tier-c">
-						<div class="tier-label">C</div>
-						<div class="tier-content" data-tier="C"></div>
-					</div>
-					<div class="tier-row tier-d">
-						<div class="tier-label">D</div>
-						<div class="tier-content" data-tier="D"></div>
-					</div>
-				</div>
+				<div class="tier-list-area" id="tierListArea"></div>
 			</div>
 		</div>
 	</div>
