@@ -5,6 +5,7 @@ let isTierListModified = false;
 let scrollInterval = null;
 let markedItems = new Set();
 let urlMapping = {};
+const visualScoreDefault = 5.5;
 
 // Load saved items and URL mapping when page loads
 window.addEventListener('load', function() {
@@ -30,6 +31,10 @@ window.addEventListener('load', function() {
         document.getElementById('inputWords').value = savedItems;
         importWords();
     }
+});
+
+window.addEventListener('load', function() {
+    setupVisualScorer();
 });
 
 // Import rows from textarea and display them in the list
@@ -425,16 +430,20 @@ function switchMode(mode) {
     const rankerTab = document.getElementById('rankerTab');
     const tierTab = document.getElementById('tierTab');
     const gamesTab = document.getElementById('gamesTab');
+    const visualTab = document.getElementById('visualTab');
     const rankerMode = document.getElementById('rankerMode');
     const tierMode = document.getElementById('tierMode');
     const gamesMode = document.getElementById('gamesMode');
+    const visualMode = document.getElementById('visualMode');
 
     rankerTab.classList.remove('active');
     tierTab.classList.remove('active');
     gamesTab.classList.remove('active');
+    visualTab.classList.remove('active');
     rankerMode.classList.add('hidden');
     tierMode.classList.add('hidden');
     gamesMode.classList.add('hidden');
+    visualMode.classList.add('hidden');
 
     if (mode === 'ranker') {
         rankerTab.classList.add('active');
@@ -445,6 +454,88 @@ function switchMode(mode) {
     } else if (mode === 'games') {
         gamesTab.classList.add('active');
         gamesMode.classList.remove('hidden');
+    } else if (mode === 'visual') {
+        visualTab.classList.add('active');
+        visualMode.classList.remove('hidden');
+        resetVisualScorer();
+    }
+}
+
+function setupVisualScorer() {
+    const slider = document.getElementById('visualScoreSlider');
+    const toggle = document.getElementById('visualScoreToggle');
+    if (!slider || !toggle) {
+        return;
+    }
+
+    slider.addEventListener('input', () => {
+        updateVisualScoreValue();
+    });
+    slider.addEventListener('dragstart', (event) => {
+        event.preventDefault();
+    });
+
+    toggle.addEventListener('click', () => {
+        toggleVisualScore();
+    });
+
+    resetVisualScorer();
+}
+
+function formatVisualScore(value) {
+    const numericValue = Number(value);
+    if (Number.isNaN(numericValue)) {
+        return value;
+    }
+    return Number.isInteger(numericValue) ? numericValue.toString() : numericValue.toFixed(1);
+}
+
+function updateVisualScoreValue() {
+    const slider = document.getElementById('visualScoreSlider');
+    const value = document.getElementById('visualScoreValue');
+    if (!slider || !value) {
+        return;
+    }
+    value.textContent = formatVisualScore(slider.value);
+}
+
+function resetVisualScorer() {
+    const sliderWrapper = document.getElementById('visualSliderWrapper');
+    const display = document.getElementById('visualScoreDisplay');
+    const toggle = document.getElementById('visualScoreToggle');
+    const slider = document.getElementById('visualScoreSlider');
+
+    if (slider) {
+        slider.value = visualScoreDefault;
+    }
+    updateVisualScoreValue();
+    if (sliderWrapper) {
+        sliderWrapper.classList.remove('hidden');
+    }
+    if (display) {
+        display.classList.add('hidden');
+    }
+    if (toggle) {
+        toggle.textContent = 'Show score';
+    }
+}
+
+function toggleVisualScore() {
+    const sliderWrapper = document.getElementById('visualSliderWrapper');
+    const display = document.getElementById('visualScoreDisplay');
+    const toggle = document.getElementById('visualScoreToggle');
+
+    if (!sliderWrapper || !display || !toggle) {
+        return;
+    }
+
+    if (display.classList.contains('hidden')) {
+        updateVisualScoreValue();
+        sliderWrapper.classList.add('hidden');
+        display.classList.remove('hidden');
+        toggle.textContent = 'Back';
+    } else {
+        resetVisualScorer();
     }
 }
 
