@@ -24,7 +24,6 @@ body {
 	align-items: flex-start;
     margin-bottom: 0px;
 	margin-left: 50px;
-	margin-right: 50px;
     gap: 0px;
 	width: 80%;
 	justify-content: space-between;
@@ -35,6 +34,10 @@ body {
 	display: flex;
 	flex-direction: row;
 	gap: 0px;
+}
+
+.nav-tabs-right {
+	margin-right: 50px;
 }
 
 .tab {
@@ -115,6 +118,12 @@ body {
     text-align: center;
 }
 
+#backgroundMode .container {
+	width: 80vw !important;
+	min-width: 800px;
+	box-sizing: border-box;
+}
+
 .background-container {
 	flex-direction: column;
 	justify-content: flex-start;
@@ -163,6 +172,9 @@ body {
 	display: flex;
 	flex-direction: column;
 	height: 120px;
+	padding: 0;
+	line-height: 0;
+	text-transform: none;
 }
 
 .background-tile img {
@@ -170,6 +182,7 @@ body {
 	height: 100%;
 	object-fit: cover;
 	display: block;
+	margin: 0;
 }
 
 .background-tile:hover {
