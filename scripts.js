@@ -6,6 +6,18 @@ let scrollInterval = null;
 let markedItems = new Set();
 let urlMapping = {};
 const visualScoreDefault = 5.5;
+// Background images are referenced via symlinks in image/background to avoid binary duplicates.
+const defaultBackgrounds = [
+    { id: 'default-mountain', name: 'Mountain', src: 'image/background/mountain.png' },
+    { id: 'default-snowy', name: 'Snowy Mountain', src: 'image/background/snowymountain.png' },
+    { id: 'default-winter-1', name: 'Winter Glow', src: 'image/background/winterbg1.png' },
+    { id: 'default-winter-2', name: 'Winter Breeze', src: 'image/background/winterbg2.png' },
+    { id: 'default-winter-3', name: 'Winter Night', src: 'image/background/winterbg3.png' },
+    { id: 'default-aespa', name: 'Armageddon', src: 'image/background/aespa-Armageddon-1st-Full-Album-Concept-Photos-documents-15(13).jpeg' },
+    { id: 'default-red-velvet', name: 'Red Velvet', src: 'image/background/red-velvet-__________-rbb-really-bad-boy-mv-3-7-screenshot.png' }
+];
+const backgroundSelectionKey = 'selectedBackground';
+let currentBackgroundUrl = null;
 
 // Load saved items and URL mapping when page loads
 window.addEventListener('load', function() {
@@ -35,6 +47,10 @@ window.addEventListener('load', function() {
 
 window.addEventListener('load', function() {
     setupVisualScorer();
+});
+
+window.addEventListener('load', function() {
+    initBackgroundManager();
 });
 
 // Import rows from textarea and display them in the list
@@ -431,19 +447,27 @@ function switchMode(mode) {
     const tierTab = document.getElementById('tierTab');
     const gamesTab = document.getElementById('gamesTab');
     const visualTab = document.getElementById('visualTab');
+    const backgroundTab = document.getElementById('backgroundTab');
     const rankerMode = document.getElementById('rankerMode');
     const tierMode = document.getElementById('tierMode');
     const gamesMode = document.getElementById('gamesMode');
     const visualMode = document.getElementById('visualMode');
+    const backgroundMode = document.getElementById('backgroundMode');
 
     rankerTab.classList.remove('active');
     tierTab.classList.remove('active');
     gamesTab.classList.remove('active');
     visualTab.classList.remove('active');
+    if (backgroundTab) {
+        backgroundTab.classList.remove('active');
+    }
     rankerMode.classList.add('hidden');
     tierMode.classList.add('hidden');
     gamesMode.classList.add('hidden');
     visualMode.classList.add('hidden');
+    if (backgroundMode) {
+        backgroundMode.classList.add('hidden');
+    }
 
     if (mode === 'ranker') {
         rankerTab.classList.add('active');
@@ -458,6 +482,9 @@ function switchMode(mode) {
         visualTab.classList.add('active');
         visualMode.classList.remove('hidden');
         resetVisualScorer();
+    } else if (mode === 'background' && backgroundTab && backgroundMode) {
+        backgroundTab.classList.add('active');
+        backgroundMode.classList.remove('hidden');
     }
 }
 
@@ -518,6 +545,259 @@ function resetVisualScorer() {
     if (toggle) {
         toggle.textContent = 'Show score';
     }
+}
+
+function initBackgroundManager() {
+    const defaultGrid = document.getElementById('defaultBackgroundGrid');
+    const customGrid = document.getElementById('customBackgroundGrid');
+    const uploadButton = document.getElementById('backgroundUploadButton');
+    const uploadInput = document.getElementById('backgroundUploadInput');
+    const clearButton = document.getElementById('backgroundClearButton');
+
+    if (!defaultGrid || !customGrid || !uploadButton || !uploadInput || !clearButton) {
+        return;
+    }
+
+    renderDefaultBackgrounds(defaultGrid);
+    loadCustomBackgrounds(customGrid).then(() => {
+        applySavedBackgroundSelection();
+    });
+
+    uploadButton.addEventListener('click', () => {
+        uploadInput.click();
+    });
+
+    uploadInput.addEventListener('change', async (event) => {
+        const file = event.target.files && event.target.files[0];
+        if (!file) {
+            return;
+        }
+        try {
+            await saveCustomBackground(file);
+            await refreshCustomBackgrounds(customGrid);
+        } catch (error) {
+            console.error('Failed to save background', error);
+        } finally {
+            uploadInput.value = '';
+        }
+    });
+
+    clearButton.addEventListener('click', async () => {
+        await clearCustomBackgrounds();
+        await refreshCustomBackgrounds(customGrid);
+        const fallback = defaultBackgrounds[0];
+        if (fallback) {
+            setBackgroundSelection({ type: 'default', src: fallback.src });
+        }
+    });
+}
+
+function renderDefaultBackgrounds(grid) {
+    grid.innerHTML = '';
+    defaultBackgrounds.forEach((background) => {
+        const tile = createBackgroundTile({
+            id: background.id,
+            label: background.name,
+            src: background.src,
+            type: 'default'
+        });
+        grid.appendChild(tile);
+    });
+}
+
+function createBackgroundTile({ id, label, src, type }) {
+    const tile = document.createElement('button');
+    tile.type = 'button';
+    tile.className = 'background-tile';
+    tile.dataset.type = type;
+    tile.dataset.id = id;
+    tile.dataset.src = src;
+
+    const image = document.createElement('img');
+    image.src = src;
+    image.alt = label;
+
+    const caption = document.createElement('span');
+    caption.textContent = label;
+
+    tile.appendChild(image);
+    tile.appendChild(caption);
+
+    tile.addEventListener('click', () => {
+        if (type === 'default') {
+            setBackgroundSelection({ type: 'default', src });
+        } else if (type === 'custom') {
+            const customId = Number(id);
+            setBackgroundSelection({ type: 'custom', id: customId });
+        }
+    });
+
+    return tile;
+}
+
+async function loadCustomBackgrounds(grid) {
+    const items = await getAllCustomBackgrounds();
+    grid.innerHTML = '';
+    if (items.length === 0) {
+        grid.innerHTML = '<p class="background-description">No uploads yet.</p>';
+        return;
+    }
+    items.forEach((item) => {
+        const imageUrl = URL.createObjectURL(item.blob);
+        const tile = createBackgroundTile({
+            id: item.id,
+            label: item.name || `Upload ${item.id}`,
+            src: imageUrl,
+            type: 'custom'
+        });
+        tile.dataset.objectUrl = imageUrl;
+        grid.appendChild(tile);
+    });
+}
+
+async function refreshCustomBackgrounds(grid) {
+    revokeCustomObjectUrls(grid);
+    await loadCustomBackgrounds(grid);
+    applySavedBackgroundSelection();
+}
+
+function revokeCustomObjectUrls(grid) {
+    const tiles = grid.querySelectorAll('.background-tile');
+    tiles.forEach((tile) => {
+        const objectUrl = tile.dataset.objectUrl;
+        if (objectUrl) {
+            URL.revokeObjectURL(objectUrl);
+        }
+    });
+}
+
+function setBackgroundSelection(selection) {
+    localStorage.setItem(backgroundSelectionKey, JSON.stringify(selection));
+    applyBackgroundSelection(selection);
+    updateBackgroundSelectionHighlight(selection);
+}
+
+function applySavedBackgroundSelection() {
+    const stored = localStorage.getItem(backgroundSelectionKey);
+    if (!stored) {
+        const fallback = defaultBackgrounds[0];
+        if (fallback) {
+            setBackgroundSelection({ type: 'default', src: fallback.src });
+        }
+        return;
+    }
+    try {
+        const parsed = JSON.parse(stored);
+        applyBackgroundSelection(parsed);
+        updateBackgroundSelectionHighlight(parsed);
+    } catch (error) {
+        console.error('Failed to read saved background selection', error);
+    }
+}
+
+function applyBackgroundSelection(selection) {
+    if (!selection) {
+        return;
+    }
+    if (selection.type === 'default' && selection.src) {
+        setBodyBackground(selection.src);
+    } else if (selection.type === 'custom' && selection.id != null) {
+        loadCustomBackgroundById(selection.id).then((blob) => {
+            if (blob) {
+                const objectUrl = URL.createObjectURL(blob);
+                setBodyBackground(objectUrl, true);
+            }
+        });
+    }
+}
+
+function updateBackgroundSelectionHighlight(selection) {
+    const tiles = document.querySelectorAll('.background-tile');
+    tiles.forEach((tile) => {
+        tile.classList.remove('selected');
+    });
+
+    if (!selection) {
+        return;
+    }
+
+    if (selection.type === 'default') {
+        const matchingTile = document.querySelector(`.background-tile[data-type=\"default\"][data-src=\"${CSS.escape(selection.src)}\"]`);
+        if (matchingTile) {
+            matchingTile.classList.add('selected');
+        }
+    } else if (selection.type === 'custom') {
+        const matchingTile = document.querySelector(`.background-tile[data-type=\"custom\"][data-id=\"${selection.id}\"]`);
+        if (matchingTile) {
+            matchingTile.classList.add('selected');
+        }
+    }
+}
+
+function setBodyBackground(sourceUrl, isObjectUrl = false) {
+    if (currentBackgroundUrl && currentBackgroundUrl.isObjectUrl) {
+        URL.revokeObjectURL(currentBackgroundUrl.url);
+    }
+    document.body.style.backgroundImage = `url('${sourceUrl}')`;
+    currentBackgroundUrl = { url: sourceUrl, isObjectUrl };
+}
+
+function openBackgroundDatabase() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open('backgroundStore', 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        request.onupgradeneeded = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains('customBackgrounds')) {
+                db.createObjectStore('customBackgrounds', { keyPath: 'id', autoIncrement: true });
+            }
+        };
+    });
+}
+
+async function saveCustomBackground(file) {
+    const db = await openBackgroundDatabase();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('customBackgrounds', 'readwrite');
+        const store = transaction.objectStore('customBackgrounds');
+        const request = store.add({ name: file.name, blob: file });
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function getAllCustomBackgrounds() {
+    const db = await openBackgroundDatabase();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('customBackgrounds', 'readonly');
+        const store = transaction.objectStore('customBackgrounds');
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function loadCustomBackgroundById(id) {
+    const db = await openBackgroundDatabase();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('customBackgrounds', 'readonly');
+        const store = transaction.objectStore('customBackgrounds');
+        const request = store.get(Number(id));
+        request.onsuccess = () => resolve(request.result ? request.result.blob : null);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function clearCustomBackgrounds() {
+    const db = await openBackgroundDatabase();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction('customBackgrounds', 'readwrite');
+        const store = transaction.objectStore('customBackgrounds');
+        const request = store.clear();
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
 }
 
 function toggleVisualScore() {

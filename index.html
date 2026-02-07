@@ -12,10 +12,15 @@
 </head>
 <body>
 	<div class="nav-tabs">
-		<button id="rankerTab" class="tab active" onclick="switchMode('ranker')">Ranker</button>
-		<button id="tierTab" class="tab" onclick="switchMode('tier')">Tier List</button>
-		<button id="gamesTab" class="tab" onclick="switchMode('games')">Top/Bottom 10</button>
-		<button id="visualTab" class="tab" onclick="switchMode('visual')">Visual Scorer</button>
+		<div class="nav-tabs-left">
+			<button id="rankerTab" class="tab active" onclick="switchMode('ranker')">Ranker</button>
+			<button id="tierTab" class="tab" onclick="switchMode('tier')">Tier List</button>
+			<button id="gamesTab" class="tab" onclick="switchMode('games')">Top/Bottom 10</button>
+			<button id="visualTab" class="tab" onclick="switchMode('visual')">Visual Scorer</button>
+		</div>
+		<div class="nav-tabs-right">
+			<button id="backgroundTab" class="tab" onclick="switchMode('background')">Background</button>
+		</div>
 	</div>
 	<div id="rankerMode">
 		<div class="container">
@@ -188,6 +193,22 @@
 				</div>
 				<button id="visualScoreToggle" class="blue-button" type="button">Show score</button>
 				</div>
+			</div>
+		</div>
+	</div>
+	<div id="backgroundMode" class="hidden">
+		<div class="container background-container">
+			<div class="background-panel">
+				<h2>Backgrounds</h2>
+				<p class="background-description">Pick a background below. Your selection is saved for next time.</p>
+				<div class="background-grid" id="defaultBackgroundGrid"></div>
+				<div class="background-actions">
+					<input id="backgroundUploadInput" class="hidden" type="file" accept="image/*">
+					<button id="backgroundUploadButton" class="blue-button" type="button">Upload image</button>
+					<button id="backgroundClearButton" class="subtle-button" type="button">Clear uploads</button>
+				</div>
+				<p class="background-warning">Uploaded images are stored locally and may use device storage.</p>
+				<div class="background-grid" id="customBackgroundGrid"></div>
 			</div>
 		</div>
 	</div>
