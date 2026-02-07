@@ -5,7 +5,7 @@ let isTierListModified = false;
 let scrollInterval = null;
 let markedItems = new Set();
 let urlMapping = {};
-const visualScoreDefault = 5;
+const visualScoreDefault = 5.5;
 
 // Load saved items and URL mapping when page loads
 window.addEventListener('load', function() {
