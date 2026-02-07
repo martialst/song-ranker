@@ -471,6 +471,9 @@ function setupVisualScorer() {
     slider.addEventListener('input', () => {
         updateVisualScoreValue();
     });
+    slider.addEventListener('dragstart', (event) => {
+        event.preventDefault();
+    });
 
     toggle.addEventListener('click', () => {
         toggleVisualScore();

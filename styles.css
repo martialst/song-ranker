@@ -115,6 +115,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .visual-scorer {
@@ -130,6 +132,7 @@ body {
     margin: 0;
     font-size: 30px;
     color: #1a202c;
+    text-shadow: none;
 }
 
 .visual-scorer-description {
@@ -137,6 +140,7 @@ body {
     color: #2d3748;
     font-size: 16px;
     line-height: 1.5;
+    text-shadow: none;
 }
 
 .visual-slider-wrapper {
@@ -150,18 +154,21 @@ body {
 .visual-slider {
     width: 100%;
     appearance: none;
-    height: 12px;
+    height: 16px;
     border-radius: 999px;
     background: #4c51bf;
     outline: none;
     cursor: pointer;
     box-shadow: 0 6px 16px rgba(66, 153, 225, 0.25);
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
 }
 
 .visual-slider::-webkit-slider-thumb {
     appearance: none;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: #fff;
     border: 2px solid #4c51bf;
@@ -174,8 +181,8 @@ body {
 }
 
 .visual-slider::-moz-range-thumb {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: #fff;
     border: 2px solid #4c51bf;
