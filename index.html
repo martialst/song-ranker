@@ -15,6 +15,7 @@
 		<button id="rankerTab" class="tab active" onclick="switchMode('ranker')">Ranker</button>
 		<button id="tierTab" class="tab" onclick="switchMode('tier')">Tier List</button>
 		<button id="gamesTab" class="tab" onclick="switchMode('games')">Top/Bottom 10</button>
+		<button id="visualTab" class="tab" onclick="switchMode('visual')">Visual Scorer</button>
 	</div>
 	<div id="rankerMode">
 		<div class="container">
@@ -159,6 +160,33 @@
 			<button onclick="generateChaoticTopBottomGame()" class="blue-button">Generate</button>
 			<!-- Future games will go here stacked below -->
 					
+		</div>
+	</div>
+	<div id="visualMode" class="hidden">
+		<div class="container visual-container">
+			<div class="visual-scorer">
+				<h2>Visual Scorer</h2>
+				<p class="visual-scorer-description">
+					Drag the slider based on feel. The exact number stays hidden until you lock it in.
+				</p>
+				<div id="visualScoreDisplay" class="visual-score-display hidden">
+					<span class="visual-score-label">Score</span>
+					<span id="visualScoreValue" class="visual-score-value">5</span>
+				</div>
+				<div id="visualSliderWrapper" class="visual-slider-wrapper">
+					<input
+						id="visualScoreSlider"
+						class="visual-slider"
+						type="range"
+						min="1"
+						max="10"
+						step="0.1"
+						value="5"
+						aria-label="Visual score slider"
+					>
+				</div>
+				<button id="visualScoreToggle" class="blue-button" type="button">Show score</button>
+			</div>
 		</div>
 	</div>
     <script src="scripts.js"></script>
