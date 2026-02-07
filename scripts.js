@@ -476,6 +476,7 @@ const minTierCount = 1;
 const maxTierCount = 10;
 const defaultTierCount = 5;
 const tierGradientStart = '#c53030';
+const tierGradientMiddle = '#ecc94b';
 const tierGradientEnd = '#38a169';
 let tierNames = [];
 
@@ -492,7 +493,10 @@ function getTierColorByIndex(index, total) {
         return generateGradientColor(tierGradientStart, tierGradientEnd, 0.5);
     }
     const percent = index / (total - 1);
-    return generateGradientColor(tierGradientStart, tierGradientEnd, percent);
+    if (percent <= 0.5) {
+        return generateGradientColor(tierGradientStart, tierGradientMiddle, percent * 2);
+    }
+    return generateGradientColor(tierGradientMiddle, tierGradientEnd, (percent - 0.5) * 2);
 }
 
 function updateTierCountDisplay(count) {
