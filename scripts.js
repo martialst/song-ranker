@@ -617,11 +617,7 @@ function createBackgroundTile({ id, label, src, type }) {
     image.src = src;
     image.alt = label;
 
-    const caption = document.createElement('span');
-    caption.textContent = label;
-
     tile.appendChild(image);
-    tile.appendChild(caption);
 
     tile.addEventListener('click', () => {
         if (type === 'default') {

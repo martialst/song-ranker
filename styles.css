@@ -24,6 +24,7 @@ body {
 	align-items: flex-start;
     margin-bottom: 0px;
 	margin-left: 50px;
+	margin-right: 50px;
     gap: 0px;
 	width: 80%;
 	justify-content: space-between;
@@ -123,7 +124,7 @@ body {
 }
 
 .background-panel {
-	width: min(900px, 95%);
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
@@ -161,21 +162,14 @@ body {
 	transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 	display: flex;
 	flex-direction: column;
+	height: 120px;
 }
 
 .background-tile img {
 	width: 100%;
-	height: 110px;
+	height: 100%;
 	object-fit: cover;
 	display: block;
-}
-
-.background-tile span {
-	padding: 8px 10px;
-	font-size: 12px;
-	color: #2d3748;
-	background: rgba(255, 255, 255, 0.9);
-	text-align: center;
 }
 
 .background-tile:hover {
@@ -676,11 +670,9 @@ button:hover {
 
 h2 {
 	color: #ffffff;
-	text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 p {
 	color: #ffffff;
-	text-shadow: 2px 2px 3px rgba(0,0,0,0.8);
 }
 
 /* Results Section */
