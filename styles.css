@@ -122,6 +122,12 @@ body {
 	width: 80vw !important;
 	min-width: 800px;
 	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-start;
+	height: auto;
+	min-height: 80vh;
 }
 
 .background-container {
