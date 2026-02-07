@@ -9,8 +9,7 @@ const visualScoreDefault = 5.5;
 // Background images are referenced via symlinks in image/background to avoid binary duplicates.
 const defaultBackgrounds = [
     { id: 'default-mountain', name: 'Mountain', src: 'image/background/mountain.png' },
-    { id: 'default-snowy', name: 'Snowy Mountain', src: 'image/background/snowymountain.png' },
-    { id: 'default-winter-1', name: 'Winter Glow', src: 'image/background/winterbg1.png' },
+    { id: 'default-snowy', name: 'Snowy Mountain', src: 'image/background/snowymountain.png' },    
     { id: 'default-winter-2', name: 'Winter Breeze', src: 'image/background/winterbg2.png' },
     { id: 'default-winter-3', name: 'Winter Night', src: 'image/background/winterbg3.png' },
     { id: 'default-aespa', name: 'Armageddon', src: 'image/background/aespa-Armageddon-1st-Full-Album-Concept-Photos-documents-15(13).jpeg' },
