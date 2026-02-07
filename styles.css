@@ -144,6 +144,47 @@ body {
     gap: 15px;
 }
 
+.tier-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 5px 10px 15px;
+}
+
+.tier-controls-label {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.tier-control-button {
+    padding: 4px 12px;
+    font-size: 18px;
+    min-width: 36px;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.tier-control-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.tier-count-display {
+    font-weight: 700;
+    font-size: 18px;
+    color: #2d3748;
+    min-width: 24px;
+    text-align: center;
+}
+
+.tier-controls-hint {
+    font-size: 12px;
+    color: #4a5568;
+}
+
 /* Individual tier rows */
 .tier-row {
     display: flex;
@@ -181,13 +222,6 @@ body {
     border: 2px dashed rgba(255, 255, 255, 0.5);
     box-sizing: border-box;
 }
-
-/* Tier colors */
-.tier-s .tier-label { background-color: #c53030; }
-.tier-a .tier-label { background-color: #c05621; }
-.tier-b .tier-label { background-color: #b7791f; }
-.tier-c .tier-label { background-color: #ab9637; }
-.tier-d .tier-label { background-color: #38a169; }
 
 /* Tier items in the tier list */
 .tier-item {
