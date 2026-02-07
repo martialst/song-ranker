@@ -676,6 +676,8 @@ function setupDropZone(element, type) {
         this.classList.remove('drag-over');
         
         if (draggedItem) {
+            const dropTarget = getDropTargetItem(this, e);
+
             // Change class and color based on destination
             if (type === 'pool') {
                 draggedItem.className = 'pool-item';
@@ -687,7 +689,13 @@ function setupDropZone(element, type) {
                 applyTierColor(draggedItem, tier);
             }
             
-            this.appendChild(draggedItem);
+            if (dropTarget) {
+                const targetRect = dropTarget.getBoundingClientRect();
+                const insertAfter = e.clientX > targetRect.left + targetRect.width / 2;
+                dropTarget.insertAdjacentElement(insertAfter ? 'afterend' : 'beforebegin', draggedItem);
+            } else {
+                this.appendChild(draggedItem);
+            }
             
             // Save to cache after any change
             saveTierDataToCache();
@@ -695,6 +703,21 @@ function setupDropZone(element, type) {
 			isTierListModified = true;
         }
     });
+}
+
+function getDropTargetItem(container, event) {
+    const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
+    if (!hoveredElement) {
+        return null;
+    }
+    const targetItem = hoveredElement.closest('.tier-item, .pool-item');
+    if (!targetItem || targetItem === draggedItem) {
+        return null;
+    }
+    if (targetItem.parentElement !== container) {
+        return null;
+    }
+    return targetItem;
 }
 
 // Function to apply tier-specific colors to items
