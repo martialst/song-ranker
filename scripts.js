@@ -14,7 +14,7 @@ const defaultBackgrounds = [
     { id: 'default-winter-3', name: 'Winter Night', src: 'image/background/winterbg3.png' },
     { id: 'default-background-1', name: 'Background 01', src: 'image/background/aespa-Armageddon-1st-Full-Album-Concept-Photos-documents-1.jpeg' },
     { id: 'default-background-2', name: 'Background 02', src: 'image/background/aespa-Armageddon-1st-Full-Album-Concept-Photos-documents-15(13).jpeg' },
-    { id: 'default-red-velvet', name: 'Red Velvet', src: 'image/background/red-velvet-__________-rbb-really-bad-boy-mv-3-7-screenshot.png' },
+    { id: 'default-red-velvet', name: 'Red Velvet', src: 'image/background/red-velvet-rbb-really-bad-boy-mv-3-7-screenshot.png' },
     { id: 'default-xg', name: 'XG Gala', src: 'image/background/XG-1st-Full-Album-GALA-Concept-Photos-documents-4(2).jpeg' },
     { id: 'default-background-3', name: 'Background 03', src: 'image/background/0543b36dc9124c3881307f6ec4f78aed.jpg' },
     { id: 'default-background-4', name: 'Background 04', src: 'image/background/3312ae774bed4311b8678aed6c3a3f9d.jpg' },
