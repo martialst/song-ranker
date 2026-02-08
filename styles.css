@@ -1036,6 +1036,20 @@ input[type="checkbox"] {
 	.top-bottom-container {
 		flex-direction: column;
 	}
+	.results-section {
+		width: 100%;
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.results-grid {
+		padding: 16px;
+	}
+
+	.results-section,
+	.results-grid {
+		box-sizing: border-box;
+	}
 }
 
 @media (max-width: 600px) {
