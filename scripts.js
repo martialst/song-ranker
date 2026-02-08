@@ -12,8 +12,18 @@ const defaultBackgrounds = [
     { id: 'default-snowy', name: 'Snowy Mountain', src: 'image/background/snowymountain.png' },    
     { id: 'default-winter-2', name: 'Winter Breeze', src: 'image/background/winterbg2.png' },
     { id: 'default-winter-3', name: 'Winter Night', src: 'image/background/winterbg3.png' },
-    { id: 'default-aespa', name: 'Armageddon', src: 'image/background/aespa-Armageddon-1st-Full-Album-Concept-Photos-documents-15(13).jpeg' },
-    { id: 'default-red-velvet', name: 'Red Velvet', src: 'image/background/red-velvet-__________-rbb-really-bad-boy-mv-3-7-screenshot.png' }
+    { id: 'default-background-1', name: 'Background 01', src: 'image/background/aespa-Armageddon-1st-Full-Album-Concept-Photos-documents-1.jpeg' },
+    { id: 'default-background-2', name: 'Background 02', src: 'image/background/aespa-Armageddon-1st-Full-Album-Concept-Photos-documents-15(13).jpeg' },
+    { id: 'default-red-velvet', name: 'Red Velvet', src: 'image/background/red-velvet-__________-rbb-really-bad-boy-mv-3-7-screenshot.png' },
+    { id: 'default-xg', name: 'XG Gala', src: 'image/background/XG-1st-Full-Album-GALA-Concept-Photos-documents-4(2).jpeg' },
+    { id: 'default-background-3', name: 'Background 03', src: 'image/background/0543b36dc9124c3881307f6ec4f78aed.jpg' },
+    { id: 'default-background-4', name: 'Background 04', src: 'image/background/3312ae774bed4311b8678aed6c3a3f9d.jpg' },
+    { id: 'default-background-5', name: 'Background 05', src: 'image/background/333a765093b20be35b5cffa61b26fd9b.jpg' },
+    { id: 'default-background-6', name: 'Background 06', src: 'image/background/7770225be1cc4791b2bf55ca75d2e947.jpg' },
+    { id: 'default-background-7', name: 'Background 07', src: 'image/background/j3ov0o2gia071.jpg' },
+    { id: 'default-background-8', name: 'Background 08', src: 'image/background/F9sR2BsaUAASne2.jpg' },
+    { id: 'default-background-9', name: 'Background 09', src: 'image/background/372697890_7192981747398399_2954241215036537593_n.jpg' },
+    { id: 'default-background-10', name: 'Background 10', src: 'image/background/GaBTB4PbUAAEGV0.jfif' }
 ];
 const backgroundSelectionKey = 'selectedBackground';
 let currentBackgroundUrl = null;
